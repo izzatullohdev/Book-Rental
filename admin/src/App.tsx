@@ -9,6 +9,7 @@ import Blank from "./pages/Blank";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
+import Book from "./pages/OtherPage/Book";
 
 export default function App() {
   return (
@@ -23,6 +24,7 @@ export default function App() {
             {/* Others Page */}
            
             <Route path="/blank" element={<Blank />} />
+            <Route path="/book" element={<Book />} />
 
             {/* Forms */}
             <Route path="/form-elements" element={<FormElements />} />
