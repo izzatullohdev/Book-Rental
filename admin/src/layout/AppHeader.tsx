@@ -9,7 +9,7 @@ import UserDropdown from "../components/header/UserDropdown";
 const AppHeader: React.FC = () => {
   const [isApplicationMenuOpen, setApplicationMenuOpen] = useState(false);
 
-  const { isMobileOpen, toggleSidebar, toggleMobileSidebar } = useSidebar();
+  const {  toggleSidebar, toggleMobileSidebar } = useSidebar();
 
   const handleToggle = () => {
     if (window.innerWidth >= 1024) {
@@ -49,7 +49,7 @@ const AppHeader: React.FC = () => {
             onClick={handleToggle}
             aria-label="Toggle Sidebar"
           >
-            {isMobileOpen ? (
+            {/* {isMobileOpen ? (
               <svg
                 width="24"
                 height="24"
@@ -79,7 +79,7 @@ const AppHeader: React.FC = () => {
                   fill="currentColor"
                 />
               </svg>
-            )}
+            )} */}
             {/* Cross Icon */}
           </button>
 

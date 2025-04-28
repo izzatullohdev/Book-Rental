@@ -9,9 +9,9 @@ import {
   ListIcon,
   PageIcon,
   PieChartIcon,
-
   TableIcon,
   UserCircleIcon,
+  UserIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
 
@@ -63,10 +63,10 @@ const othersItems: NavItem[] = [
     ],
   },
   {
-    icon: <ChevronDownIcon />,
-    name: "More",
+    icon: <UserIcon/>,
+    name: "Authentication",
     subItems: [
-      { name: "Authentication", path: "/signin", pro: false },
+      { name: "Signin", path: "/signin", pro: false },
     ],
   }
 ];
@@ -301,12 +301,18 @@ const AppSidebar: React.FC = () => {
               />
             </>
           ) : (
-            <img
-              src="/images/logo/logos.png"
-              alt="Logo"
-              width={32}
-              height={32}
-            />
+            <><img
+                className="hidden dark:block"
+                src="/images/logo/logos.png"
+                alt="Logo"
+                width={32}
+                height={32} />
+                <img src="/images/logo/logo.png"
+                className="dark:hidden" 
+                alt="Logo" 
+                width={32}
+                height={32}/>
+              </>
           )}
         </Link>
       </div>
