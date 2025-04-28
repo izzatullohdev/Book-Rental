@@ -62,6 +62,13 @@ const othersItems: NavItem[] = [
       { name: "Bar Chart", path: "/bar-chart", pro: false },
     ],
   },
+  {
+    icon: <ChevronDownIcon />,
+    name: "More",
+    subItems: [
+      { name: "Authentication", path: "/signin", pro: false },
+    ],
+  }
 ];
 
 const AppSidebar: React.FC = () => {
