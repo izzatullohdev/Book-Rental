@@ -5,6 +5,7 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
+import { useState } from "react";
 import Badge from "../ui/badge/Badge";
 
 // Define the TypeScript interface for the table rows
@@ -16,8 +17,9 @@ interface Product {
   price: string; // Price of the product (as a string with currency symbol)
   // status: string; // Status of the product
   image: string; // URL or path to the product image
-  status: "Delivered" | "Pending" | "Canceled"; // Status of the product
+  status: "Topshirilgan" | "Davom etayotgan" | "Bekor qilingan"; // Status of the product
 }
+
 
 // Define the table data using the interface
 const tableData: Product[] = [
@@ -27,7 +29,7 @@ const tableData: Product[] = [
     variants: "2 Variants",
     category: "Laptop",
     price: "$2399.00",
-    status: "Delivered",
+    status: "Bekor qilingan",
     image: "/images/product/product-01.jpg", // Replace with actual image URL
   },
   {
@@ -36,7 +38,7 @@ const tableData: Product[] = [
     variants: "1 Variant",
     category: "Watch",
     price: "$879.00",
-    status: "Pending",
+    status: "Davom etayotgan",
     image: "/images/product/product-02.jpg", // Replace with actual image URL
   },
   {
@@ -45,7 +47,7 @@ const tableData: Product[] = [
     variants: "2 Variants",
     category: "SmartPhone",
     price: "$1869.00",
-    status: "Delivered",
+    status: "Topshirilgan",
     image: "/images/product/product-03.jpg", // Replace with actual image URL
   },
   {
@@ -54,7 +56,7 @@ const tableData: Product[] = [
     variants: "2 Variants",
     category: "Electronics",
     price: "$1699.00",
-    status: "Canceled",
+    status: "Bekor qilingan",
     image: "/images/product/product-04.jpg", // Replace with actual image URL
   },
   {
@@ -63,23 +65,66 @@ const tableData: Product[] = [
     variants: "1 Variant",
     category: "Accessories",
     price: "$240.00",
-    status: "Delivered",
+    status: "Topshirilgan",
+    image: "/images/product/product-05.jpg", // Replace with actual image URL
+  },
+  {
+    id: 5,
+    name: "AirPods Pro 2nd Gen",
+    variants: "1 Variant",
+    category: "Accessories",
+    price: "$240.00",
+    status: "Topshirilgan",
+    image: "/images/product/product-05.jpg", // Replace with actual image URL
+  },
+  {
+    id: 5,
+    name: "AirPods Pro 2nd Gen",
+    variants: "1 Variant",
+    category: "Accessories",
+    price: "$240.00",
+    status: "Topshirilgan",
+    image: "/images/product/product-05.jpg", // Replace with actual image URL
+  },
+  {
+    id: 5,
+    name: "AirPods Pro 2nd Gen",
+    variants: "1 Variant",
+    category: "Accessories",
+    price: "$240.00",
+    status: "Topshirilgan",
     image: "/images/product/product-05.jpg", // Replace with actual image URL
   },
 ];
 
 export default function RecentOrders() {
+  // Fillter button bosilganida ochiladigan filterlar uchun modal 
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setFilter({}); 
+  };
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const openModal = () => setIsModalOpen(true);
+  const [filter, setFilter] = useState<{ category?: string; status?: string }>({});
+  const filteredData = tableData.filter((product) => {
+    const matchCategory = filter.category ? product.category === filter.category : true;
+    const matchStatus = filter.status ? product.status === filter.status : true;
+    return matchCategory && matchStatus;
+  });
+  
+    
   return (
     <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6">
       <div className="flex flex-col gap-2 mb-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
-            Recent Orders
+            Shu kunlardagi buyurtmalar
           </h3>
         </div>
 
-        <div className="flex items-center gap-3">
-          <button className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200">
+        <div className="flex items-center gap-3 ">
+          <button onClick={openModal} 
+          className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200">
             <svg
               className="stroke-current fill-white dark:fill-gray-800"
               width="20"
@@ -115,39 +160,40 @@ export default function RecentOrders() {
                 strokeWidth="1.5"
               />
             </svg>
-            Filter
+            
+            Filterlash
           </button>
           <button className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200">
-            See all
+            Barcha buyurtmalar
           </button>
         </div>
       </div>
-      <div className="max-w-full overflow-x-auto">
+      <div className="overflow-x-auto">
         <Table>
           {/* Table Header */}
-          <TableHeader className="border-gray-100 dark:border-gray-800 border-y">
+          <TableHeader className=" border-gray-100 dark:border-gray-800 border-y ">
             <TableRow>
-              <TableCell
+            <TableCell
                 isHeader
-                className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                className="py-3  font-medium text-gray-500  text-theme-xs dark:text-gray-400"
               >
-                Products
+               Kitoblar
               </TableCell>
               <TableCell
                 isHeader
-                className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                className="py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400"
               >
-                Category
+                Narxi
               </TableCell>
               <TableCell
                 isHeader
-                className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                className="py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400"
               >
-                Price
+                Kategoriyalar
               </TableCell>
               <TableCell
                 isHeader
-                className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                className="py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400"
               >
                 Status
               </TableCell>
@@ -156,10 +202,10 @@ export default function RecentOrders() {
 
           {/* Table Body */}
 
-          <TableBody className="divide-y divide-gray-100 dark:divide-gray-800">
-            {tableData.map((product) => (
-              <TableRow key={product.id} className="">
-                <TableCell className="py-3">
+          <TableBody className="divide-y divide-gray-100 dark:divide-gray-800 md:overflow-x-auto">
+            {filteredData.map((product) => (
+              <TableRow key={product.id} className="text-center">
+                <TableCell className="py-3 ">
                   <div className="flex items-center gap-3">
                     <div className="h-[50px] w-[50px] overflow-hidden rounded-md">
                       <img
@@ -178,19 +224,19 @@ export default function RecentOrders() {
                     </div>
                   </div>
                 </TableCell>
-                <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                <TableCell className="py-3 px-3 min-w-[150px] text-gray-500 text-theme-sm dark:text-gray-400">
                   {product.price}
                 </TableCell>
-                <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                <TableCell className="py-3 min-w-[150px] text-gray-500 text-theme-sm dark:text-gray-400">
                   {product.category}
                 </TableCell>
-                <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                <TableCell className="py-3 min-w-[150px] text-gray-500 text-theme-sm dark:text-gray-400">
                   <Badge
                     size="sm"
                     color={
-                      product.status === "Delivered"
+                      product.status === "Topshirilgan"
                         ? "success"
-                        : product.status === "Pending"
+                        : product.status === "Davom etayotgan"
                         ? "warning"
                         : "error"
                     }
@@ -202,6 +248,62 @@ export default function RecentOrders() {
             ))}
           </TableBody>
         </Table>
+        {/* Modal ochish */ }
+        {isModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+            <div className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-md dark:bg-gray-800">
+              <h2 className="text-lg font-semibold mb-4 dark:text-white">Filterlash</h2>
+              {/* Modal content here */}
+              <div className="flex flex-col gap-4">
+  {/* Select Category */}
+  <div>
+    <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Kategoriya</label>
+    <select
+      value={filter.category || ""}
+      onChange={(e) => setFilter((prev) => ({ ...prev, category: e.target.value }))}
+      className="w-full rounded border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
+    >
+      <option value="">Barchasi</option>
+      <option value="Laptop">Kitoblar</option>
+      <option value="Watch">Watch</option>
+      <option value="SmartPhone">SmartPhone</option>
+      <option value="Electronics">Electronics</option>
+      <option value="Accessories">Accessories</option>
+    </select>
+  </div>
+
+  {/* Select Status */}
+  <div>
+    <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Holati</label>
+    <select
+      value={filter.status || ""}
+      onChange={(e) => setFilter((prev) => ({ ...prev, status: e.target.value as Product["status"] }))}
+      className="w-full rounded border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
+    >
+      <option value="">Barchasi</option>
+      <option value="Topshirilgan">Topshirilgan</option>
+      <option value="Davom etayotgan">Davom etayotgan</option>
+      <option value="Bekor qilingan">Bekor qilingan</option>
+    </select>
+  </div>
+</div>
+
+              <button
+                onClick={closeModal}
+                className="mt-4 rounded bg-blue-600 text-white px-4 py-2 hover:bg-blue-700"
+              >
+                Close
+              </button>
+              <button
+  onClick={() => setFilter({})}
+  className="mt-2 rounded mx-10 bg-red-500 text-white px-4 py-2 hover:bg-red-600"
+>
+  Reset Filters
+</button>
+            </div>
+          </div>
+        )}
+
       </div>
     </div>
   );
