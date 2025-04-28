@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { MoreDotIcon } from "../../icons";
-import CountryMap from "./CountryMap";
 
 export default function DemographicCard() {
   const [isOpen, setIsOpen] = useState(false);
@@ -47,14 +46,6 @@ export default function DemographicCard() {
               Delete
             </DropdownItem>
           </Dropdown>
-        </div>
-      </div>
-      <div className="px-4 py-6 my-6 overflow-hidden border border-gary-200 rounded-2xl dark:border-gray-800 sm:px-6">
-        <div
-          id="mapOne"
-          className="mapOne map-btn -mx-4 -my-6 h-[212px] w-[252px] 2xsm:w-[307px] xsm:w-[358px] sm:-mx-6 md:w-[668px] lg:w-[634px] xl:w-[393px] 2xl:w-[554px]"
-        >
-          <CountryMap />
         </div>
       </div>
 
