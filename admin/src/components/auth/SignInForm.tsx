@@ -5,7 +5,6 @@ import Input from "../form/input/InputField";
 import Checkbox from "../form/input/Checkbox";
 import Button from "../ui/button/Button";
 import axios from "axios";
-import { message as antdMessage } from "antd";
 
 interface FormData {
   name: string;
@@ -46,22 +45,20 @@ export default function SignInForm() {
       const data = response.data;
   
       if (data.success) {
-        antdMessage.success("Muvaffaqiyatli bajarildi");
         window.location.href = "/";
+        window.localStorage.setItem("token", data.message);
       } else {
-        antdMessage.error("Xatolik yuz berdi");
+        window.alert("Xatolik yuz berdi");
       }      
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        if (error) {
-          antdMessage.error("Login yoki parol noto'g'ri!");
-        } else {
-          antdMessage.error("Serverdan noma'lum javob keldi.");
-        }
+        const errorMessage =
+          "Login yoki parol noto'g'ri!";
+        window.alert(errorMessage);
       } else {
-        antdMessage.error("Noma'lum xatolik yuz berdi.");
+        window.alert("Noma'lum xatolik yuz berdi.");
       }
-    }
+    }    
   };   
 
   return (

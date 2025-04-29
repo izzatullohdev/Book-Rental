@@ -36,17 +36,16 @@ const navItems: NavItem[] = [
     path: "/profile",
   },
   {
-    name: "Books",
+    name: "Kitoblar",
     icon: <ListIcon />,
     subItems: [
-      { name: "Books all", path: "/books-all", pro: false },
-      { name: "Books create", path: "/books-create", pro: false }
+      { name: "Barcha kitoblar", path: "/books-all", pro: false }
     ],
   },
   {
-    name: "Category",
+    name: "Kategoriya",
     icon: <TableIcon />,
-    subItems: [{ name: "Category all", path: "/category-all", pro: false }],
+    subItems: [{ name: "Kategoriyalar", path: "/category-all", pro: false }],
   },
   {
     name: "Pages",
