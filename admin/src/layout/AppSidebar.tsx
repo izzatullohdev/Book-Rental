@@ -9,22 +9,9 @@ import {
   ListIcon,
   PageIcon,
   PieChartIcon,
-<<<<<<< HEAD
-=======
-
-  PlugInIcon,
-
->>>>>>> 5da33bc54b3444aa371b4b49328a9ce69bd5db56
-  PlugInIcon,
-<<<<<<< HEAD
-=======
-
-  PlugInIcon,
-
->>>>>>> 5da33bc54b3444aa371b4b49328a9ce69bd5db56
+PlugInIcon,
   TableIcon,
   UserCircleIcon,
-  UserIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
 
