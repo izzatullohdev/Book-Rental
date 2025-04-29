@@ -5,7 +5,6 @@ import SelectInputs from "../../components/form/form-elements/SelectInputs";
 import TextAreaInput from "../../components/form/form-elements/TextAreaInput";
 import PageMeta from "../../components/common/PageMeta";
 import FileInputExample from "../../components/form/form-elements/FileInputExample";
-
 export default function FormElements() {
   return (
     <div>
@@ -23,6 +22,7 @@ export default function FormElements() {
         <div className="space-y-6">
           <DropzoneComponent />
           <FileInputExample/>
+          <button className="py-15 px-52 rounded-2xl text-5xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03] dark:text-white">Yuklash</button>
         </div>
       </div>
     </div>
