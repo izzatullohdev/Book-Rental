@@ -1,13 +1,69 @@
-import { useState } from "react";
+import { useState, ChangeEvent, FormEvent } from "react";
 import { EyeCloseIcon, EyeIcon } from "../../icons";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Checkbox from "../form/input/Checkbox";
 import Button from "../ui/button/Button";
+import axios from "axios";
+import { message as antdMessage } from "antd";
+
+interface FormData {
+  name: string;
+  password: string;
+}
+
+interface LoginResponse {
+  success: boolean;
+  message: string;
+}
 
 export default function SignInForm() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [isChecked, setIsChecked] = useState<boolean>(false);
+  const [login, setLogin] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); 
+  
+    const payload: FormData = {
+      name: login,
+      password: password,
+    };
+  
+    try {
+      const response = await axios.post<LoginResponse>(
+        `${import.meta.env.VITE_API}/api/v1/admin/login`,
+        payload,
+        {
+          headers: {
+            "Content-Type": "application/json", 
+            Accept: "application/json",     
+          },
+        }
+      );
+  
+      const data = response.data;
+  
+      if (data.success) {
+        antdMessage.success("Muvaffaqiyatli bajarildi");
+        window.location.href = "/";
+      } else {
+        antdMessage.error("Xatolik yuz berdi");
+      }      
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error) {
+          antdMessage.error("Login yoki parol noto'g'ri!");
+        } else {
+          antdMessage.error("Serverdan noma'lum javob keldi.");
+        }
+      } else {
+        antdMessage.error("Noma'lum xatolik yuz berdi.");
+      }
+    }
+  };   
+
   return (
     <div className="flex flex-col flex-1">
       <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
@@ -18,22 +74,28 @@ export default function SignInForm() {
             </h1>
           </div>
           <div>
-            <form>
+            <form onSubmit={handleSubmit}>
               <div className="space-y-6">
                 <div>
                   <Label>
-                    Login kiriting <span className="text-error-500">*</span>{" "}
+                    Login kiriting <span className="text-error-500">*</span>
                   </Label>
-                  <Input placeholder="Enter your login" />
+                  <Input
+                    placeholder="Enter your login"
+                    value={login}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => setLogin(e.target.value)}
+                  />
                 </div>
                 <div>
                   <Label>
-                    Parol kiriting <span className="text-error-500">*</span>{" "}
+                    Parol kiriting <span className="text-error-500">*</span>
                   </Label>
                   <div className="relative">
                     <Input
                       type={showPassword ? "text" : "password"}
                       placeholder="Enter your password"
+                      value={password}
+                      onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                     />
                     <span
                       onClick={() => setShowPassword(!showPassword)}
