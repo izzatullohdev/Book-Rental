@@ -21,7 +21,7 @@ export default function App() {
             <Route index path="/" element={<Home />} />
 
             {/* Others Page */}
-           <Route path="/books" element={<Books />} />
+           <Route path="/books-all" element={<Books />} />
 
             {/* Forms */}
             <Route path="/books-create" element={<FormElements />} />
