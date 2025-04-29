@@ -27,10 +27,10 @@ export default function App() {
             <Route path="/book" element={<Book />} />
 
             {/* Forms */}
-            <Route path="/form-elements" element={<FormElements />} />
+            <Route path="/books-create" element={<FormElements />} />
 
             {/* Tables */}
-            <Route path="/basic-tables" element={<BasicTables />} />
+            <Route path="/category-all" element={<BasicTables />} />
 
 
             {/* Charts */}
