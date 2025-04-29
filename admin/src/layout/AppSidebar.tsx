@@ -51,6 +51,7 @@ const navItems: NavItem[] = [
     name: "Pages",
     icon: <PageIcon />,
     subItems: [
+      { name: "Books", path: "/books", pro: false },
       { name: "404 Error", path: "/error-404", pro: false },
     ],
   },
