@@ -14,7 +14,7 @@ const BasicTableOne: React.FC = () => {
     { id: 2, name: "Category 2", createdAt: "2023-01-03" },
     { id: 3, name: "Category 3", createdAt: "2023-01-05" },
     { id: 4, name: "Category 4", createdAt: "2023-01-07" },
-    { id: 5, name: "Category 5", createdAt: "2023-01-09" },
+    { id: 5, name: "Category 5", createdAt: "2023-01-09" }
   ]);
 
   const [isUpdateModalVisible, setIsUpdateModalVisible] = useState<boolean>(false);
@@ -71,11 +71,11 @@ const BasicTableOne: React.FC = () => {
         <div className="text-center">Kategoriyalar mavjud emas!</div>
       ) : (
         <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
-          <div className="max-w-full overflow-x-auto p-5">
+          <div className="max-w-full overflow-x-auto grid grid-cols-1 gap-3 p-5">
             {category.map((item) => (
               <div
                 key={item.id}
-                className="flex items-center justify-between border-b border-gray-200 py-3"
+                className="flex items-center justify-between border border-gray-500 rounded-lg px-5 py-3"
               >
                 <div className="text-sm font-medium text-gray-900 dark:text-white">
                   {item.name}
@@ -85,13 +85,13 @@ const BasicTableOne: React.FC = () => {
                 </div>
                 <div className="flex items-center space-x-2">
                   <button
-                    className="text-sm text-blue-500 hover:text-blue-700 bg-blue-200 px-3 py-1 rounded-md"
+                    className="text-sm text-blue-500 hover:text-blue-600 bg-blue-200 dark:bg-blue-500 dark:hover:bg-blue-600 dark:text-white px-3 py-1 rounded-md"
                     onClick={() => showUpdateModal(item)}
                   >
                     Edit
                   </button>
                   <button
-                    className="text-sm text-red-500 hover:text-red-700 bg-red-200 px-3 py-1 rounded-md"
+                    className="text-sm text-red-500 hover:text-red-600 bg-red-200 dark:bg-red-500 dark:hover:bg-red-600 dark:text-white px-3 py-1 rounded-md"
                     onClick={() => showDeleteModal(item)}
                   >
                     Delete

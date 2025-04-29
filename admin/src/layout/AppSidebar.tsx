@@ -10,6 +10,8 @@ import {
   PageIcon,
   PieChartIcon,
 
+  PlugInIcon,
+
   TableIcon,
   UserCircleIcon,
 } from "../icons";
@@ -34,20 +36,22 @@ const navItems: NavItem[] = [
     path: "/profile",
   },
   {
-    name: "Forms",
+    name: "Books",
     icon: <ListIcon />,
-    subItems: [{ name: "Form Elements", path: "/form-elements", pro: false }],
+    subItems: [
+      { name: "Books all", path: "/books-all", pro: false },
+      { name: "Books create", path: "/books-create", pro: false }
+    ],
   },
   {
-    name: "Tables",
+    name: "Category",
     icon: <TableIcon />,
-    subItems: [{ name: "Basic Tables", path: "/basic-tables", pro: false }],
+    subItems: [{ name: "Category all", path: "/category-all", pro: false }],
   },
   {
     name: "Pages",
     icon: <PageIcon />,
     subItems: [
-      { name: "Blank Page", path: "/blank", pro: false },
       { name: "404 Error", path: "/error-404", pro: false },
     ],
   },
@@ -63,12 +67,12 @@ const othersItems: NavItem[] = [
     ],
   },
   {
-    icon: <ChevronDownIcon />,
-    name: "More",
+    icon: <PlugInIcon />,
+    name: "Authentication",
     subItems: [
-      { name: "Authentication", path: "/signin", pro: false },
+      { name: "Sign In", path: "/signin", pro: false }
     ],
-  }
+  },
 ];
 
 const AppSidebar: React.FC = () => {
@@ -180,27 +184,7 @@ const AppSidebar: React.FC = () => {
               )}
             </button>
           ) : (
-            nav.path && (
-              <Link
-                to={nav.path}
-                className={`menu-item group ${
-                  isActive(nav.path) ? "menu-item-active" : "menu-item-inactive"
-                }`}
-              >
-                <span
-                  className={`menu-item-icon-size ${
-                    isActive(nav.path)
-                      ? "menu-item-icon-active"
-                      : "menu-item-icon-inactive"
-                  }`}
-                >
-                  {nav.icon}
-                </span>
-                {(isExpanded || isHovered || isMobileOpen) && (
-                  <span className="menu-item-text">{nav.name}</span>
-                )}
-              </Link>
-            )
+           ""
           )}
           {nav.subItems && (isExpanded || isHovered || isMobileOpen) && (
             <div
