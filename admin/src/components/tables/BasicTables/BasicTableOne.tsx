@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {Modal,Input} from "antd"   
+import { Modal, Input, Button } from "antd";
 
 // Kategoriya tipi
 interface Category {
@@ -14,14 +14,39 @@ const BasicTableOne: React.FC = () => {
     { id: 2, name: "Category 2", createdAt: "2023-01-03" },
     { id: 3, name: "Category 3", createdAt: "2023-01-05" },
     { id: 4, name: "Category 4", createdAt: "2023-01-07" },
-    { id: 5, name: "Category 5", createdAt: "2023-01-09" }
+    { id: 5, name: "Category 5", createdAt: "2023-01-09" },
   ]);
+
+  const [isAddModalVisible, setIsAddModalVisible] = useState<boolean>(false);
+  const [newCategoryName, setNewCategoryName] = useState<string>("");
 
   const [isUpdateModalVisible, setIsUpdateModalVisible] = useState<boolean>(false);
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState<boolean>(false);
   const [currentCategory, setCurrentCategory] = useState<Category | null>(null);
   const [updatedName, setUpdatedName] = useState<string>("");
 
+  // Add category
+  const showAddModal = () => setIsAddModalVisible(true);
+
+  const handleAddOk = () => {
+    if (newCategoryName.trim()) {
+      const newCategory: Category = {
+        id: Date.now(),
+        name: newCategoryName.trim(),
+        createdAt: new Date().toISOString().split("T")[0],
+      };
+      setCategory((prev) => [...prev, newCategory]);
+      setNewCategoryName("");
+      setIsAddModalVisible(false);
+    }
+  };
+
+  const handleAddCancel = () => {
+    setIsAddModalVisible(false);
+    setNewCategoryName("");
+  };
+
+  // Update
   const showUpdateModal = (item: Category): void => {
     setCurrentCategory(item);
     setUpdatedName(item.name);
@@ -45,6 +70,7 @@ const BasicTableOne: React.FC = () => {
     setCurrentCategory(null);
   };
 
+  // Delete
   const showDeleteModal = (item: Category): void => {
     setCurrentCategory(item);
     setIsDeleteModalVisible(true);
@@ -67,6 +93,12 @@ const BasicTableOne: React.FC = () => {
 
   return (
     <>
+      <div className="mb-4 flex justify-end">
+        <Button type="primary" onClick={showAddModal}>
+          + Add Category
+        </Button>
+      </div>
+
       {category.length === 0 ? (
         <div className="text-center">Kategoriyalar mavjud emas!</div>
       ) : (
@@ -103,10 +135,26 @@ const BasicTableOne: React.FC = () => {
         </div>
       )}
 
+      {/* Add Modal */}
+      <Modal
+        title="Add New Category"
+        open={isAddModalVisible}
+        onOk={handleAddOk}
+        onCancel={handleAddCancel}
+        okText="Add"
+        cancelText="Cancel"
+      >
+        <Input
+          placeholder="Kategoriya nomi"
+          value={newCategoryName}
+          onChange={(e) => setNewCategoryName(e.target.value)}
+        />
+      </Modal>
+
       {/* Update Modal */}
       <Modal
         title="Update Category"
-        visible={isUpdateModalVisible}
+        open={isUpdateModalVisible}
         onOk={handleUpdateOk}
         onCancel={handleUpdateCancel}
       >
@@ -119,7 +167,7 @@ const BasicTableOne: React.FC = () => {
       {/* Delete Modal */}
       <Modal
         title="Confirm Deletion"
-        visible={isDeleteModalVisible}
+        open={isDeleteModalVisible}
         onOk={handleDeleteOk}
         onCancel={handleDeleteCancel}
         okText="Yes, Delete"

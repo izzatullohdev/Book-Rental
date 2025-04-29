@@ -5,10 +5,10 @@ import LineChart from "./pages/Charts/LineChart";
 import BarChart from "./pages/Charts/BarChart";
 import BasicTables from "./pages/Tables/BasicTables";
 import FormElements from "./pages/Forms/FormElements";
-import Blank from "./pages/Blank";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
+import Books from "./pages/OtherPage/Books"
 
 export default function App() {
   return (
@@ -21,8 +21,7 @@ export default function App() {
             <Route index path="/" element={<Home />} />
 
             {/* Others Page */}
-           
-            <Route path="/blank" element={<Blank />} />
+           <Route path="/books-all" element={<Books />} />
 
             {/* Forms */}
             <Route path="/books-create" element={<FormElements />} />
