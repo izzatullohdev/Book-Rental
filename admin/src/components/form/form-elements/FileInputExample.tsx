@@ -2,7 +2,7 @@ import React from "react";
 import ComponentCard from "../../common/ComponentCard";
 import { useDropzone } from "react-dropzone";
 
-const FileInputExample: React.FC = () => {
+const  FileInputExample: React.FC = () => {
   // State to manage uploading state
   const [isUploading, setIsUploading] = React.useState(false);
   const [uploadMessage, setUploadMessage] = React.useState<string>("");
@@ -12,7 +12,7 @@ const FileInputExample: React.FC = () => {
     console.log("Files dropped:", acceptedFiles);
     // Start file upload
     handleFileUpload(acceptedFiles[0]);
-  };
+  };  
 
   // Upload the file to the server
   const handleFileUpload = async (file: File) => {

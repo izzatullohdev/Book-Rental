@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, Input } from "antd";
+import {Modal,Input} from "antd"   
 
 // Kategoriya tipi
 interface Category {
