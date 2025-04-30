@@ -8,7 +8,8 @@ import FormElements from "./pages/Forms/FormElements";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
-import Books from "./pages/OtherPage/Books"
+import Books from "./pages/OtherPage/Books";
+import PrivateRoute from "./components/privateRoute";
 
 export default function App() {
   return (
@@ -16,29 +17,22 @@ export default function App() {
       <Router>
         <ScrollToTop />
         <Routes>
-          {/* Dashboard Layout */}
-          <Route element={<AppLayout />}>
-            <Route index path="/" element={<Home />} />
-
-            {/* Others Page */}
-           <Route path="/books-all" element={<Books />} />
-
-            {/* Forms */}
-            <Route path="/books-create" element={<FormElements />} />
-
-            {/* Tables */}
-            <Route path="/category-all" element={<BasicTables />} />
-
-
-            {/* Charts */}
-            <Route path="/line-chart" element={<LineChart />} />
-            <Route path="/bar-chart" element={<BarChart />} />
-          </Route>
-
-          {/* Auth Layout */}
+          {/* Auth sahifa token talab qilmaydi */}
           <Route path="/signin" element={<SignIn />} />
 
-          {/* Fallback Route */}
+          {/* Private routes */}
+          <Route element={<PrivateRoute />}>
+            <Route element={<AppLayout />}>
+              <Route index path="/" element={<Home />} />
+              <Route path="/books-all" element={<Books />} />
+              <Route path="/books-create" element={<FormElements />} />
+              <Route path="/category-all" element={<BasicTables />} />
+              <Route path="/line-chart" element={<LineChart />} />
+              <Route path="/bar-chart" element={<BarChart />} />
+            </Route>
+          </Route>
+
+          {/* 404 */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
