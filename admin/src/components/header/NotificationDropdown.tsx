@@ -51,7 +51,7 @@ export default function NotificationDropdown() {
       <Dropdown
         isOpen={isOpen}
         onClose={closeDropdown}
-        className="absolute -right-[240px] mt-[17px] flex h-[480px] w-[350px] flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark sm:w-[361px] lg:right-0"
+        className="absolute -right-[240px] mt-[17px] flex h-[480px] w-[350px] flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-lg max-md:-left-15 dark:border-gray-800 dark:bg-gray-dark sm:w-[361px] lg:right-0"
       >
         <div className="flex items-center justify-between pb-3 mb-3 border-b border-gray-100 dark:border-gray-700">
           <h5 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
@@ -78,39 +78,42 @@ export default function NotificationDropdown() {
           </button>
         </div>
         <ul className="flex flex-col h-auto overflow-y-auto custom-scrollbar">
-          <li>
-            <DropdownItem
-              onItemClick={closeDropdown}
-              className="flex gap-3 rounded-lg border-b border-gray-100 p-3 px-4.5 py-3 hover:bg-gray-100 dark:border-gray-800 dark:hover:bg-white/5"
-            >
+  {
+    notifications?.map((item) => (
+      <li key={item.id}>
+        <DropdownItem
+          onItemClick={closeDropdown}
+          className="flex flex-col gap-1 rounded-lg border-b border-gray-100 p-4 hover:bg-gray-100 dark:border-gray-800 dark:hover:bg-white/5"
+        >
+          <span className="flex justify-between text-sm text-gray-500 dark:text-gray-400">
+            <span className="font-medium text-gray-800 dark:text-white/90">{item.name}</span>
+            <span className={
+              item.status === "active"
+                ? "text-green-500"
+                : item.status === "inactive"
+                ? "text-red-500"
+                : "text-yellow-500"
+            }>
               {
-                notifications?.map((item)=>(
-                  <span className="block" key={item.id}>
-                    <span className="mb-1.5 block space-x-1 text-theme-sm text-gray-500 dark:text-gray-400">
-                      <span className="font-medium text-gray-800 dark:text-white/90">
-                        {item.name}
-                      </span>
-                      <span className="font-medium text-gray-800 dark:text-white/90">
-                        {item.status === "active" ? (
-                          <span className="text-green-500">Yangi buyurtma</span>
-                        ) : item.status === "inactive" ? (
-                          <span className="text-red-500">Buyurtma bekor qilingan</span>
-                        ) : (
-                          <span className="text-yellow-500">Buyurtma kutilyapti</span>
-                        )}
-                      </span>
-                    </span>
-                    <span className="flex items-center gap-2 text-gray-500 text-theme-xs dark:text-gray-400">
-                      <span>onlingan vaqt</span>
-                      <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
-                      <span>15 min ago</span>
-                    </span>
-                  </span>
-                ))
+                item.status === "active"
+                  ? "Yangi buyurtma"
+                  : item.status === "inactive"
+                  ? "Bekor qilingan"
+                  : "Kutilmoqda"
               }
-            </DropdownItem>
-          </li>
-        </ul>
+            </span>
+          </span>
+          <span className="flex items-center gap-2 text-xs text-gray-400 dark:text-gray-500">
+            <span>Onlayn vaqt</span>
+            <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
+            <span>15 min oldin</span>
+          </span>
+        </DropdownItem>
+      </li>
+    ))
+  }
+</ul>
+
         <Link
           to="/"
           className="block px-4 py-2 mt-3 text-sm font-medium text-center text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
