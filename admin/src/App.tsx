@@ -10,6 +10,7 @@ import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
 import Books from "./pages/OtherPage/Books";
 import PrivateRoute from "./components/privateRoute";
+import Facultets from "./pages/OtherPage/Facultets";
 
 export default function App() {
   return (
@@ -25,6 +26,7 @@ export default function App() {
             <Route element={<AppLayout />}>
               <Route index path="/" element={<Home />} />
               <Route path="/books-all" element={<Books />} />
+              <Route path="/facultets" element={<Facultets />} />
               <Route path="/books-create" element={<FormElements />} />
               <Route path="/category-all" element={<BasicTables />} />
               <Route path="/line-chart" element={<LineChart />} />
