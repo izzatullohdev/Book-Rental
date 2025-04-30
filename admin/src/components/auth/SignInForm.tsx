@@ -14,6 +14,9 @@ interface FormData {
 interface LoginResponse {
   success: boolean;
   message: string;
+  data: {
+    token: string;
+  };
 }
 
 export default function SignInForm() {
@@ -23,43 +26,46 @@ export default function SignInForm() {
   const [password, setPassword] = useState<string>("");
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); 
-  
+    e.preventDefault();
+    console.log("Form submitted");
+
     const payload: FormData = {
       name: login,
       password: password,
     };
-  
+
     try {
       const response = await axios.post<LoginResponse>(
         `${import.meta.env.VITE_API}/api/v1/admin/login`,
         payload,
         {
           headers: {
-            "Content-Type": "application/json", 
-            Accept: "application/json",     
+            "Content-Type": "application/json",
+            Accept: "application/json",
           },
         }
       );
-  
+
       const data = response.data;
-  
+      console.log("Response data:", data); 
+
       if (data.success) {
+        window.localStorage.setItem("token", data.data.token);
+
         window.location.href = "/";
-        window.localStorage.setItem("token", data.message);
       } else {
         window.alert("Xatolik yuz berdi");
-      }      
+      }
     } catch (error) {
+      console.log("Error:", error);
       if (axios.isAxiosError(error)) {
-        const errorMessage =
-          "Login yoki parol noto'g'ri!";
+        const errorMessage = "Login yoki parol noto'g'ri!";
         window.alert(errorMessage);
       } else {
         window.alert("Noma'lum xatolik yuz berdi.");
       }
-    }    
-  };   
+    }
+  };
 
   return (
     <div className="flex flex-col flex-1">
