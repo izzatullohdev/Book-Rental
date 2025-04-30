@@ -1,58 +1,64 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ComponentCard from "../../common/ComponentCard";
 import { useDropzone } from "react-dropzone";
 
-const  FileInputExample: React.FC = () => {
-  // State to manage uploading state
-  const [isUploading, setIsUploading] = React.useState(false);
-  const [uploadMessage, setUploadMessage] = React.useState<string>("");
+interface FileDropProps {
+  onChange: (file: File | null) => void;
+  onValidate?: (validateFn: () => boolean) => void;
+}
 
-  // Handle file drop
+const FileDrop: React.FC<FileDropProps> = ({ onChange, onValidate }) => {
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  // Removed unused isUploading state
+  const [uploadMessage, setUploadMessage] = useState<string>("");
+
   const onDrop = (acceptedFiles: File[]) => {
-    console.log("Files dropped:", acceptedFiles);
-    // Start file upload
-    handleFileUpload(acceptedFiles[0]);
-  };  
+    const file = acceptedFiles[0];
+    if (file) {
+      setSelectedFile(file);
+      onChange(file);
+      handleFileUpload(file);
+    }
+  };
 
-  // Upload the file to the server
   const handleFileUpload = async (file: File) => {
-    setIsUploading(true);
-    setUploadMessage("Uploading...");
+    // Removed isUploading state update
+    setUploadMessage("Yuklanmoqda...");
 
     const formData = new FormData();
-    formData.append("file", file); // Append the file to form data
+    formData.append("file", file);
 
     try {
       const response = await fetch("/your-upload-endpoint", {
         method: "POST",
         headers: {
-          "Accept": "application/json",
+          Accept: "application/json",
         },
         body: formData,
       });
 
-      if (response.ok) {
-        setUploadMessage("File uploaded successfully!");
-      } else {
-        setUploadMessage("Error uploading file.");
-      }
+      setUploadMessage(
+        response.ok ? "Fayl muvaffaqiyatli yuklandi!" : "Faylni yuklashda xatolik yuz berdi."
+      );
     } catch (error) {
       console.error("Upload error:", error);
-      setUploadMessage("Error uploading file.");
-    } finally {
-      setIsUploading(false);
+      setUploadMessage("Serverga ulanishda xatolik.");
     }
   };
 
+  useEffect(() => {
+    if (onValidate) {
+      onValidate(() => selectedFile !== null); // Ensure a file is selected
+    }
+  }, [selectedFile, onValidate]);
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: {
-      "application/pdf": [],
-    },
+    accept: { "application/pdf": [] },
   });
 
   return (
-    <ComponentCard title="Pdf fayl yuklash">
+    <ComponentCard title="PDF fayl yuklash">
       <div className="transition border border-gray-300 border-dashed cursor-pointer dark:hover:border-brand-500 dark:border-gray-700 rounded-xl hover:border-brand-500">
         <form
           {...getRootProps()}
@@ -61,15 +67,13 @@ const  FileInputExample: React.FC = () => {
               ? "border-brand-500 bg-gray-100 dark:bg-gray-800"
               : "border-gray-300 bg-gray-50 dark:border-gray-700 dark:bg-gray-900"
             }`}
-          id="demo-upload"
+          id="pdf-upload"
         >
-          {/* Hidden Input */}
           <input {...getInputProps()} />
 
           <div className="dz-message flex flex-col items-center m-0!">
-            {/* Icon Container */}
             <div className="mb-[22px] flex justify-center">
-              <div className="flex h-[68px] w-[68px]  items-center justify-center rounded-full bg-gray-200 text-gray-700 dark:bg-gray-800 dark:text-gray-400">
+              <div className="flex h-[68px] w-[68px] items-center justify-center rounded-full bg-gray-200 text-gray-700 dark:bg-gray-800 dark:text-gray-400">
                 <svg
                   className="fill-current"
                   width="29"
@@ -86,24 +90,23 @@ const  FileInputExample: React.FC = () => {
               </div>
             </div>
 
-            {/* Text Content */}
-            <h4 className="mb-3 font-semibold text-gray-800 text-theme-xl dark:text-white/90">
-              {isDragActive ? "Faylni qo'shing" : "Faylni qo'shish uchun bosing"}
+            <h4 className="mb-3 font-semibold text-center text-gray-800 text-theme-xl dark:text-white/90">
+              {isDragActive ? "Faylni qo'shing" : "PDF faylni yuklash uchun bosing"}
             </h4>
 
             <span className="text-center mb-5 block w-full max-w-[290px] text-sm text-gray-700 dark:text-gray-400">
-              Iltimos pdf formatda fayllarni yuklang
+              Faqat PDF formatdagi faylni yuklang
             </span>
 
             <span className="font-medium underline text-theme-sm text-brand-500">
-              Browse File
+              Faylni tanlang
             </span>
           </div>
         </form>
       </div>
 
-      {/* Upload Status Message */}
-      {isUploading && (
+      {/* Upload Status */}
+      {uploadMessage && (
         <div className="mt-3 text-sm text-gray-500 dark:text-gray-400">
           {uploadMessage}
         </div>
@@ -112,4 +115,4 @@ const  FileInputExample: React.FC = () => {
   );
 };
 
-export default FileInputExample;
+export default FileDrop;

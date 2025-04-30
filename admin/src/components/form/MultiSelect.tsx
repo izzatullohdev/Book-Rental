@@ -54,11 +54,11 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
         {label}
       </label>
 
-      <div className="relative z-20 inline-block w-full">
+      <div className="relative z-20  inline-block w-full">
         <div className="relative flex flex-col items-center">
           <div  className="w-full">
-            <div className="mb-2 flex h-11 rounded-lg border border-gray-300 py-1.5 pl-3 pr-3 shadow-theme-xs outline-hidden transition focus:border-brand-300 focus:shadow-focus-ring dark:border-gray-700 dark:bg-gray-900 dark:focus:border-brand-300">
-              <div className="flex flex-wrap flex-auto gap-2">
+            <div className="mb-2 relative min-h-[2.75rem]  rounded-lg border border-gray-300 py-1.5 pl-3 pr-3 shadow-theme-xs outline-hidden transition focus:border-brand-300 focus:shadow-focus-ring dark:border-gray-700 dark:bg-gray-900 dark:focus:border-brand-300">
+              <div className="flex flex-wrap flex-auto gap-2 px-2">
                 {selectedValuesText.length > 0 ? (
                   selectedValuesText.map((text, index) => (
                     <div
@@ -94,21 +94,21 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
                   ))
                 ) : (
                   <input
-                    placeholder="Select option"
-                    className="w-full h-full p-1 pr-2 text-sm bg-transparent border-0 outline-hidden appearance-none placeholder:text-gray-800 focus:border-0 focus:outline-hidden focus:ring-0 dark:placeholder:text-white/90 dark:text-white/90"
+                    placeholder="Variantlarni tanlang"
+                    className="w-full h-full p-1 pr-2  text-sm bg-transparent border-0 outline-hidden appearance-none placeholder:text-gray-800 focus:border-0 focus:outline-hidden focus:ring-0 dark:placeholder:text-white/90 dark:text-white/90"
                     readOnly
                     value="Variantlarni tanlang"
                   />
                 )}
               </div>
-              <div className="flex items-center py-1 pl-1 pr-1 w-7">
+              <div className="absolute top-2 right-1">
                 <button
                   type="button"
                   onClick={toggleDropdown}
                   className="w-5 h-5 text-gray-700 outline-hidden cursor-pointer focus:outline-hidden dark:text-gray-400"
                 >
                   <svg
-                    className={`stroke-current ${isOpen ? "rotate-180" : ""}`}
+                    className={`stroke-current transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
                     width="20"
                     height="20"
                     viewBox="0 0 20 20"
@@ -127,7 +127,6 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
               </div>
             </div>
           </div>
-
           {isOpen && (
             <div
               className="absolute left-0 z-40 w-full overflow-y-auto bg-white rounded-lg shadow-sm top-full max-h-select dark:bg-gray-900"
