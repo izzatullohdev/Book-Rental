@@ -70,7 +70,6 @@ const BasicTableOne: React.FC = () => {
     setCurrentCategory(null);
   };
 
-  // Delete
   const showDeleteModal = (item: Category): void => {
     setCurrentCategory(item);
     setIsDeleteModalVisible(true);

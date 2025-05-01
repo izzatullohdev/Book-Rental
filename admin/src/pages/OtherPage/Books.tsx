@@ -8,7 +8,7 @@ interface Book {
   img: string;
   author: string;
   category: string;
-  type: string; // kitob turi (Darslik, Badiiy, Yangi, PDF)
+  type: string;
 }
 
 interface BookType {

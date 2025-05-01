@@ -1,10 +1,10 @@
 import { useState, ChangeEvent, FormEvent } from "react";
 import { EyeCloseIcon, EyeIcon } from "../../icons";
-import Label from "../form/Label";
 import Input from "../form/input/InputField";
-import Checkbox from "../form/input/Checkbox";
 import Button from "../ui/button/Button";
 import axios from "axios";
+// import Checkbox from "../form/input/Checkbox";
+// import Label from "../form/Label";
 
 interface FormData {
   name: string;
@@ -21,7 +21,7 @@ interface LoginResponse {
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [isChecked, setIsChecked] = useState<boolean>(false);
+  // const [isChecked, setIsChecked] = useState<boolean>(false);
   const [login, setLogin] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
@@ -80,23 +80,23 @@ export default function SignInForm() {
             <form onSubmit={handleSubmit}>
               <div className="space-y-6">
                 <div>
-                  <Label>
+                  {/* <Label>
                     Login kiriting <span className="text-error-500">*</span>
-                  </Label>
+                  </Label> */}
                   <Input
-                    placeholder="Enter your login"
+                    placeholder="Login kiriting"
                     value={login}
                     onChange={(e: ChangeEvent<HTMLInputElement>) => setLogin(e.target.value)}
                   />
                 </div>
                 <div>
-                  <Label>
+                  {/* <Label>
                     Parol kiriting <span className="text-error-500">*</span>
-                  </Label>
+                  </Label> */}
                   <div className="relative">
                     <Input
                       type={showPassword ? "text" : "password"}
-                      placeholder="Enter your password"
+                      placeholder="Parol kiriting"
                       value={password}
                       onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                     />
@@ -112,14 +112,14 @@ export default function SignInForm() {
                     </span>
                   </div>
                 </div>
-                <div className="flex items-center justify-between">
+                {/* <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Checkbox checked={isChecked} onChange={setIsChecked} />
                     <span className="block font-normal text-gray-700 text-theme-sm dark:text-gray-400">
                       Keep me logged in
                     </span>
                   </div>
-                </div>
+                </div> */}
                 <div>
                   <Button className="w-full" size="sm">
                     Sign in

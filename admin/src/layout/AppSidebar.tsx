@@ -52,8 +52,10 @@ const navItems: NavItem[] = [
     name: "Pages",
     icon: <PageIcon />,
     subItems: [
-      { name: "Facultets", path: "/facultets", pro: false },
-      { name: "404 Error", path: "/error-404", pro: false },
+      { name: "Guruhlar", path: "/groups", pro: false },
+      { name: "Ta'lim", path: "/education", pro: false },
+      { name: "Tredtype", path: "/tredtype", pro: false },
+      { name: "Fakultetlar", path: "/faculty", pro: false }
     ],
   },
 ];
