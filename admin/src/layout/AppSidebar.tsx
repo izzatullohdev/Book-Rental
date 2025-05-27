@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router";
 
-// Assume these icons are imported from an icon library
 import {
   ChevronDownIcon,
   GridIcon,
@@ -9,8 +8,7 @@ import {
   ListIcon,
   PageIcon,
   PieChartIcon,
-PlugInIcon,
-  TableIcon,
+  PlugInIcon,
   UserCircleIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
@@ -42,20 +40,14 @@ const navItems: NavItem[] = [
     ],
   },
   {
-    name: "Kategoriya",
-    icon: <TableIcon />,
-    subItems: [
-      { name: "Kategoriyalar", path: "/category-all", pro: false },    
-    ],
-  },
-  {
     name: "Pages",
     icon: <PageIcon />,
     subItems: [
-      { name: "Guruhlar", path: "/groups", pro: false },
-      { name: "Ta'lim", path: "/education", pro: false },
+      { name: "Mualliflar", path: "/auther", pro: false },
+      { name: "Kafedralar", path: "/kafedra", pro: false },
+      { name: "Yo'nalish", path: "/direction", pro: false },
       { name: "Tredtype", path: "/tredtype", pro: false },
-      { name: "Fakultetlar", path: "/faculty", pro: false }
+      // { name: "Kategoriya", path: "/category-all", pro: false},
     ],
   },
 ];

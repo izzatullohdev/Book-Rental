@@ -8,20 +8,16 @@ import {
 import { useState } from "react";
 import Badge from "../ui/badge/Badge";
 
-// Define the TypeScript interface for the table rows
 interface Product {
-  id: number; // Unique identifier for each product
-  name: string; // Product name
-  variants: string; // Number of variants (e.g., "1 Variant", "2 Variants")
-  category: string; // Category of the product
-  price: string; // Price of the product (as a string with currency symbol)
-  // status: string; // Status of the product
-  image: string; // URL or path to the product image
-  status: "Topshirilgan" | "Davom etayotgan" | "Bekor qilingan"; // Status of the product
+  id: number;
+  name: string;
+  variants: string;
+  category: string;
+  price: string;
+  image: string;
+  status: "Topshirilgan" | "Davom etayotgan" | "Bekor qilingan";
 }
 
-
-// Define the table data using the interface
 const tableData: Product[] = [
   {
     id: 1,
@@ -30,7 +26,7 @@ const tableData: Product[] = [
     category: "Laptop",
     price: "$2399.00",
     status: "Bekor qilingan",
-    image: "/images/product/product-01.jpg", // Replace with actual image URL
+    image: "/images/product/product-01.jpg",
   },
   {
     id: 2,
@@ -39,7 +35,7 @@ const tableData: Product[] = [
     category: "Watch",
     price: "$879.00",
     status: "Davom etayotgan",
-    image: "/images/product/product-02.jpg", // Replace with actual image URL
+    image: "/images/product/product-02.jpg",
   },
   {
     id: 3,
@@ -48,7 +44,7 @@ const tableData: Product[] = [
     category: "SmartPhone",
     price: "$1869.00",
     status: "Topshirilgan",
-    image: "/images/product/product-03.jpg", // Replace with actual image URL
+    image: "/images/product/product-03.jpg",
   },
   {
     id: 4,
@@ -57,7 +53,7 @@ const tableData: Product[] = [
     category: "Electronics",
     price: "$1699.00",
     status: "Bekor qilingan",
-    image: "/images/product/product-04.jpg", // Replace with actual image URL
+    image: "/images/product/product-04.jpg",
   },
   {
     id: 5,
@@ -66,7 +62,7 @@ const tableData: Product[] = [
     category: "Accessories",
     price: "$240.00",
     status: "Topshirilgan",
-    image: "/images/product/product-05.jpg", // Replace with actual image URL
+    image: "/images/product/product-05.jpg",
   },
   {
     id: 5,
@@ -75,7 +71,7 @@ const tableData: Product[] = [
     category: "Accessories",
     price: "$240.00",
     status: "Topshirilgan",
-    image: "/images/product/product-05.jpg", // Replace with actual image URL
+    image: "/images/product/product-05.jpg",
   },
   {
     id: 5,
@@ -84,7 +80,7 @@ const tableData: Product[] = [
     category: "Accessories",
     price: "$240.00",
     status: "Topshirilgan",
-    image: "/images/product/product-05.jpg", // Replace with actual image URL
+    image: "/images/product/product-05.jpg",
   },
   {
     id: 5,
@@ -93,12 +89,11 @@ const tableData: Product[] = [
     category: "Accessories",
     price: "$240.00",
     status: "Topshirilgan",
-    image: "/images/product/product-05.jpg", // Replace with actual image URL
+    image: "/images/product/product-05.jpg",
   },
 ];
 
 export default function RecentOrders() {
-  // Fillter button bosilganida ochiladigan filterlar uchun modal 
   const closeModal = () => {
     setIsModalOpen(false);
     setFilter({}); 
@@ -163,19 +158,19 @@ export default function RecentOrders() {
             
             Filterlash
           </button>
-          <button className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200">
+          {/* <button className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200">
             Barcha buyurtmalar
-          </button>
+          </button> */}
         </div>
       </div>
       <div className="overflow-x-auto">
         <Table>
-          {/* Table Header */}
-          <TableHeader className=" border-gray-100 dark:border-gray-800 border-y ">
+          {/* table head  */}
+          <TableHeader className=" border-gray-100 dark:border-gray-800 border-y">
             <TableRow>
-            <TableCell
+              <TableCell
                 isHeader
-                className="py-3  font-medium text-gray-500  text-theme-xs dark:text-gray-400"
+                className="font-medium text-gray-500  text-theme-xs dark:text-gray-400 py-3"
               >
                Kitoblar
               </TableCell>
@@ -199,28 +194,26 @@ export default function RecentOrders() {
               </TableCell>
             </TableRow>
           </TableHeader>
-
-          {/* Table Body */}
-
+          {/* table body  */}
           <TableBody className="divide-y divide-gray-100 dark:divide-gray-800 md:overflow-x-auto">
             {filteredData.map((product) => (
               <TableRow key={product.id} className="text-center">
                 <TableCell className="py-3 ">
                   <div className="flex items-center gap-3">
                     <div className="h-[50px] w-[50px] overflow-hidden rounded-md">
-                      <img
+                      {/* <img
                         src={product.image}
                         className="h-[50px] w-[50px]"
                         alt={product.name}
-                      />
+                      /> */}
                     </div>
                     <div>
                       <p className="font-medium text-gray-800 text-theme-sm dark:text-white/90">
                         {product.name}
                       </p>
-                      <span className="text-gray-500 text-theme-xs dark:text-gray-400">
+                      {/* <span className="text-gray-500 text-theme-xs dark:text-gray-400">
                         {product.variants}
-                      </span>
+                      </span> */}
                     </div>
                   </div>
                 </TableCell>
@@ -248,14 +241,11 @@ export default function RecentOrders() {
             ))}
           </TableBody>
         </Table>
-        {/* Modal ochish */ }
         {isModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
             <div className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-md dark:bg-gray-800">
               <h2 className="text-lg font-semibold mb-4 dark:text-white">Filterlash</h2>
-              {/* Modal content here */}
               <div className="flex flex-col gap-4">
-  {/* Select Category */}
   <div>
     <label className="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Kategoriya</label>
     <select
