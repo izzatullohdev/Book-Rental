@@ -2,12 +2,13 @@ import { useState, ChangeEvent, FormEvent } from "react";
 import { EyeCloseIcon, EyeIcon } from "../../icons";
 import Input from "../form/input/InputField";
 import Button from "../ui/button/Button";
-import axios from "axios";
-// import Checkbox from "../form/input/Checkbox";
-// import Label from "../form/Label";
+import axios, { AxiosError } from "axios";
+import Label from "../form/Label";
+import { message as antdMessage } from "antd";
+import { useNavigate } from "react-router-dom";
 
 interface FormData {
-  name: string;
+  passport_id: string;
   password: string;
 }
 
@@ -16,54 +17,75 @@ interface LoginResponse {
   message: string;
   data: {
     token: string;
+    userGroups?: {
+      group_id: string;
+    }[];
   };
+}
+
+interface ErrorResponse {
+  success: boolean;
+  message: string;
 }
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  // const [isChecked, setIsChecked] = useState<boolean>(false);
-  const [login, setLogin] = useState<string>("");
+  const [passport_id, setPassportId] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Form submitted");
 
     const payload: FormData = {
-      name: login,
-      password: password,
+      passport_id,
+      password,
     };
 
     try {
+      setLoading(true);
+
       const response = await axios.post<LoginResponse>(
-        `${import.meta.env.VITE_API}/api/v1/admin/login`,
+        `${import.meta.env.VITE_API}/api/admin/log`,
         payload,
         {
           headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
+            "Content-Type": "application/json"
+          }
         }
       );
 
-      const data = response.data;
-      console.log("Response data:", data); 
+      if (response.data.success) {
+        const token = response.data.data.token;
+        const roles = response.data.data.userGroups?.map((item) => item.group_id);
+        const expiry = new Date().getTime() + 24 * 60 * 60 * 1000;
 
-      if (data.success) {
-        window.localStorage.setItem("token", data.data.token);
+        localStorage.setItem("token", token);
+        localStorage.setItem("isRoles", JSON.stringify(roles));
+        localStorage.setItem("token_expiry", expiry.toString());
 
-        window.location.href = "/";
+        antdMessage.success("Kirish muvaffaqiyatli");
+
+        navigate("/");
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 100);
+
       } else {
-        window.alert("Xatolik yuz berdi");
+        antdMessage.error("Kirishda xatolik yuz berdi");
       }
     } catch (error) {
-      console.log("Error:", error);
-      if (axios.isAxiosError(error)) {
-        const errorMessage = "Login yoki parol noto'g'ri!";
-        window.alert(errorMessage);
+      const err = error as AxiosError<ErrorResponse>;
+      if (err.response) {
+        antdMessage.error(err.response.data.message);
       } else {
-        window.alert("Noma'lum xatolik yuz berdi.");
+        antdMessage.error("Noma’lum xatolik yuz berdi");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -80,25 +102,29 @@ export default function SignInForm() {
             <form onSubmit={handleSubmit}>
               <div className="space-y-6">
                 <div>
-                  {/* <Label>
-                    Login kiriting <span className="text-error-500">*</span>
-                  </Label> */}
+                  <Label>
+                    Passport ID kiriting <span className="text-error-500">*</span>
+                  </Label>
                   <Input
-                    placeholder="Login kiriting"
-                    value={login}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => setLogin(e.target.value)}
+                    placeholder="AD2072541"
+                    value={passport_id}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                      setPassportId(e.target.value)
+                    }
                   />
                 </div>
                 <div>
-                  {/* <Label>
-                    Parol kiriting <span className="text-error-500">*</span>
-                  </Label> */}
+                  <Label>
+                    Parolni kiriting <span className="text-error-500">*</span>
+                  </Label>
                   <div className="relative">
                     <Input
                       type={showPassword ? "text" : "password"}
-                      placeholder="Parol kiriting"
+                      placeholder="Parolni kiriting!"
                       value={password}
-                      onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+                      onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                        setPassword(e.target.value)
+                      }
                     />
                     <span
                       onClick={() => setShowPassword(!showPassword)}
@@ -112,17 +138,9 @@ export default function SignInForm() {
                     </span>
                   </div>
                 </div>
-                {/* <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <Checkbox checked={isChecked} onChange={setIsChecked} />
-                    <span className="block font-normal text-gray-700 text-theme-sm dark:text-gray-400">
-                      Keep me logged in
-                    </span>
-                  </div>
-                </div> */}
                 <div>
-                  <Button className="w-full" size="sm">
-                    Sign in
+                  <Button disabled={loading} className="w-full" size="sm">
+                    {loading ? "Yuborilmoqda..." : "Kirish"}
                   </Button>
                 </div>
               </div>

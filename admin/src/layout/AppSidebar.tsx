@@ -4,14 +4,14 @@ import { Link, useLocation } from "react-router";
 import {
   ChevronDownIcon,
   GridIcon,
+  GroupIcon,
   HorizontaLDots,
-  ListIcon,
-  PageIcon,
   PieChartIcon,
   PlugInIcon,
   UserCircleIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
+import { GoBook } from "react-icons/go";
 
 type NavItem = {
   name: string;
@@ -33,23 +33,36 @@ const navItems: NavItem[] = [
   },
   {
     name: "Kitoblar",
-    icon: <ListIcon />,
+    icon: <GoBook />,
     subItems: [
-      { name: "Barcha kitoblar", path: "/books-all", pro: false },
-      { name: "Kitob qo'shish", path: "/books-create", pro: false },
-    ],
+      { name: "Kitob mualliflari", path: "/auther", pro: false },
+      { name: "Kitob kategoriyalari", path: "/categories", pro: false },
+      { name: "Kitob tillari", path: "/languages", pro: false },
+      { name: "Kitob alifbolari", path: "/alphabet", pro: false },
+      { name: "Kitob statuslari", path: "/status", pro: false },
+      { name: "Kitob va Kategoriya", path: "/book-categories", pro: false },
+      { name: "Kitob qo'shish", path: "/book-create", pro: false },
+      { name: "Kitoblar", path: "/books-all", pro: false }
+    ]
   },
   {
-    name: "Pages",
-    icon: <PageIcon />,
+    name: "Talabalar",
+    icon: <GroupIcon />,
     subItems: [
-      { name: "Mualliflar", path: "/auther", pro: false },
       { name: "Kafedralar", path: "/kafedra", pro: false },
       { name: "Yo'nalish", path: "/direction", pro: false },
-      { name: "Tredtype", path: "/tredtype", pro: false },
-      // { name: "Kategoriya", path: "/category-all", pro: false},
-    ],
+      { name: "Talaba Guruhlari", path: "/student_group", pro: false },
+      { name: "Barcha foydalanuvchilar", path: "/users-all", pro: false }
+    ]
   },
+  {
+    name: "Admin",
+    icon: <GroupIcon />,
+    subItems: [
+      { name: "Xodim qo'shish", path: "/admins", pro: false },
+      { name: "Xodimlar vazifalari", path: "/roles", pro: false }
+    ]
+  }
 ];
 
 const othersItems: NavItem[] = [
@@ -67,7 +80,7 @@ const othersItems: NavItem[] = [
     subItems: [
       { name: "Sign In", path: "/signin", pro: false }
     ],
-  },
+  }
 ];
 
 const AppSidebar: React.FC = () => {
@@ -83,7 +96,6 @@ const AppSidebar: React.FC = () => {
   );
   const subMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
-  // const isActive = (path: string) => location.pathname === path;
   const isActive = useCallback(
     (path: string) => location.pathname === path,
     [location.pathname]
@@ -313,22 +325,6 @@ const AppSidebar: React.FC = () => {
                 )}
               </h2>
               {renderMenuItems(navItems, "main")}
-            </div>
-            <div className="">
-              <h2
-                className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${
-                  !isExpanded && !isHovered
-                    ? "lg:justify-center"
-                    : "justify-start"
-                }`}
-              >
-                {isExpanded || isHovered || isMobileOpen ? (
-                  "Others"
-                ) : (
-                  <HorizontaLDots />
-                )}
-              </h2>
-              {renderMenuItems(othersItems, "others")}
             </div>
           </div>
         </nav>

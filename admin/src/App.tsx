@@ -1,19 +1,25 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import SignIn from "./pages/AuthPages/SignIn";
-import NotFound from "./pages/OtherPage/NotFound";
 import LineChart from "./pages/Charts/LineChart";
 import BarChart from "./pages/Charts/BarChart";
-import FormElements from "./pages/Forms/FormElements";
 import AppLayout from "./layout/AppLayout";
 import Home from "./pages/Dashboard/Home";
-import Books from "./pages/OtherPage/Books";
-// import Education from "./pages/OtherPage/Direction";
-// import Tredtype from "./pages/OtherPage/Tredtype";
-import Auther from "./pages/OtherPage/Auther";
-import Kafedra from "./pages/OtherPage/Kafedra";
-import Direction from "./pages/OtherPage/Direction";
-// import Category from "./pages/OtherPage/Category";
+import Books from "./pages/BooksPage/Books";
+import Auther from "./pages/BooksPage/Auther";
+import Kafedra from "./pages/UsersPage/Kafedra";
+import Direction from "./pages/UsersPage/Direction";
+import StudentGroup from "./pages/UsersPage/StudentGroup";
+import UsersAll from "./pages/UsersPage/UsersAll";
+import NotFound from "./pages/NotFound/NotFound";
+import Category from "./pages/BooksPage/Category";
+import Languages from "./pages/BooksPage/Languages";
+import Alphabet from "./pages/BooksPage/Alphabet";
+import Admins from "./pages/Admins/Admins";
+import Status from "./pages/BooksPage/Status";
+import CreateBooks from "./pages/BooksPage/CreateBooks";
+import Roles from "./pages/Admins/Roles";
+import ProtectedRoute from "./components/common/ProtectedRoute";
 
 export default function App() {
   return (
@@ -22,19 +28,24 @@ export default function App() {
         <ScrollToTop />
         <Routes>
           <Route path="/signin" element={<SignIn />} />
-            <Route element={<AppLayout />}>
-              <Route index path="/" element={<Home />} />
-              <Route path="/books-all" element={<Books />} />
-              <Route path="/auther" element={<Auther />} />
-              <Route path="/kafedra" element={<Kafedra />} />
-              <Route path="/direction" element={<Direction />}/>
-              <Route path="/books-create" element={<FormElements />} />
-              <Route path="/line-chart" element={<LineChart />} />
-              <Route path="/bar-chart" element={<BarChart />} />
-              {/* <Route path="/education" element={<Education />} /> */}
-              {/* <Route path="/tredtype" element={<Tredtype />} /> */}
-              {/* <Route path="/category-all" element={<Category />} /> */}
-            </Route>
+          <Route element={<AppLayout />}>
+            <Route index path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+            <Route path="/admins" element={<ProtectedRoute><Admins /></ProtectedRoute>} />
+            <Route path="/auther" element={<ProtectedRoute><Auther /></ProtectedRoute>} />
+            <Route path="/categories" element={<ProtectedRoute><Category /></ProtectedRoute>} />
+            <Route path="/languages" element={<ProtectedRoute><Languages /></ProtectedRoute>} />
+            <Route path="/alphabet" element={<ProtectedRoute><Alphabet /></ProtectedRoute>} />
+            <Route path="/status" element={<ProtectedRoute><Status /></ProtectedRoute>} />
+            <Route path="/books-all" element={<ProtectedRoute><Books /></ProtectedRoute>} />
+            <Route path="/book-create" element={<ProtectedRoute><CreateBooks /></ProtectedRoute>} />
+            <Route path="/kafedra" element={<ProtectedRoute><Kafedra /></ProtectedRoute>} />
+            <Route path="/direction" element={<ProtectedRoute><Direction /></ProtectedRoute>} />
+            <Route path="/student_group" element={<ProtectedRoute><StudentGroup /></ProtectedRoute>} />
+            <Route path="/line-chart" element={<ProtectedRoute><LineChart /></ProtectedRoute>} />
+            <Route path="/bar-chart" element={<ProtectedRoute><BarChart /></ProtectedRoute>} />
+            <Route path="/users-all" element={<ProtectedRoute><UsersAll /></ProtectedRoute>} />
+            <Route path="/roles" element={<ProtectedRoute><Roles /></ProtectedRoute>} />
+          </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>

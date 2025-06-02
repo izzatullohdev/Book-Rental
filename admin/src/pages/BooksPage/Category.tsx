@@ -7,9 +7,20 @@ interface GroupType {
   name: string;
 }
 
-const Auther = () => {
+interface PermissionType {
+  id: string;
+  group_id: string;
+  permission_id: string;
+  permissionInfo: {
+    id: string;
+    code_name: string;
+  }
+}
+
+const Category = () => {
   const [name, setName] = useState<string>("");
   const [groups, setGroups] = useState<GroupType[]>([]);
+  const [userGroup, setUserGroup] = useState<PermissionType[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -19,11 +30,42 @@ const Auther = () => {
   const [isUpdateModalVisible, setIsUpdateModalVisible] = useState<boolean>(false);
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState<boolean>(false);
 
+  const fetchPermission = async () => {
+    const token = localStorage.getItem("token"); 
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_API}/api/group-permissions`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      });
+      setUserGroup(response.data.data);
+    } catch (err) {
+      console.error("Muallifni olishda xatolik:", err);
+      setError("Muallifni olishda xatolik yuz berdi.");
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchPermission();
+  },[])
+
   const fetchGroups = async () => {
-    setLoading(true);
     setError(null);
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API}/api/auther`);
+      const token = localStorage.getItem("token");
+
+      const isRolesStr = localStorage.getItem("isRoles");
+      const isRoles = isRolesStr ? JSON.parse(isRolesStr) : [];
+      const matchedGroups = userGroup.filter(item => isRoles.includes(item.group_id));
+      const permissionIds = matchedGroups?.map((item)=> item.permissionInfo.code_name);
+
+      const response = await axios.get(`${import.meta.env.VITE_API}/api/categories`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "X-permission": permissionIds[0]
+        }
+      });
       setGroups(response.data.data);
     } catch (err) {
       console.error("Muallifni olishda xatolik:", err);
@@ -34,20 +76,35 @@ const Auther = () => {
   };
 
   useEffect(() => {
-    fetchGroups();
-  }, []);
+    if (userGroup.length > 0) {
+      fetchGroups();
+    }
+  }, [userGroup]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!name.trim()) {
-      antdMessage.error("Muallif kiritish shart!");
+      antdMessage.warning("Muallif kiritish shart!");
       return;
     }
     setLoading(true);
     try {
+      const token = localStorage.getItem("token");
+
+      const isRolesStr = localStorage.getItem("isRoles");
+      const isRoles = isRolesStr ? JSON.parse(isRolesStr) : [];
+      const matchedGroups = userGroup.filter(item => isRoles.includes(item.group_id));
+      const permissionIds = matchedGroups?.map((item)=> item.permissionInfo.code_name);
+
       await axios.post(
-        `${import.meta.env.VITE_API}/api/auther`,
-        { name: name }
+        `${import.meta.env.VITE_API}/api/categories`,
+        { name: name }, 
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "X-permission": permissionIds[0]
+          }
+        }
       );
       antdMessage.success("Muallif muvaffaqiyatli qo‘shildi!");
       setName("");
@@ -68,9 +125,22 @@ const Auther = () => {
 
   const handleUpdateOk = async () => {
     try {
+      const token = localStorage.getItem("token");
+
+      const isRolesStr = localStorage.getItem("isRoles");
+      const isRoles = isRolesStr ? JSON.parse(isRolesStr) : [];
+      const matchedGroups = userGroup.filter(item => isRoles.includes(item.group_id));
+      const permissionIds = matchedGroups?.map((item)=> item.permissionInfo.code_name);
+
       await axios.put(
-        `${import.meta.env.VITE_API}/api/auther/${selectedGroup?.id}`,
-        { name: editedTitle }
+        `${import.meta.env.VITE_API}/api/categories/${selectedGroup?.id}`,
+        { name: editedTitle },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "X-permission": permissionIds[0]
+          }
+        }
       );
       setIsUpdateModalVisible(false);
       setSelectedGroup(null);
@@ -93,8 +163,21 @@ const Auther = () => {
 
   const handleDeleteOk = async () => {
     try {
+      const token = localStorage.getItem("token");
+
+      const isRolesStr = localStorage.getItem("isRoles");
+      const isRoles = isRolesStr ? JSON.parse(isRolesStr) : [];
+      const matchedGroups = userGroup.filter(item => isRoles.includes(item.group_id));
+      const permissionIds = matchedGroups?.map((item)=> item.permissionInfo.code_name);
+
       await axios.delete(
-        `${import.meta.env.VITE_API}/api/auther/${selectedGroup?.id}`
+        `${import.meta.env.VITE_API}/api/categories/${selectedGroup?.id}`,  
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "X-permission": permissionIds[0]
+          }
+        }
       );
       setIsDeleteModalVisible(false);
       setSelectedGroup(null);
@@ -112,39 +195,39 @@ const Auther = () => {
 
   return (
     <div className="min-h-[80%] p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-auto">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">Kitob muallifini qo'shish</h2>
+      <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">Kategoriya qo'shish</h2>
       <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-6">
         <div className="w-full md:col-span-2">
           <label
-            htmlFor="name"
-            className="block font-medium text-gray-700 dark:text-gray-300 mb-1"
+            htmlFor="category"
+            className="block font-medium text-gray-700 dark:text-gray-300 cursor-pointer mb-1"
           >
-            Kitob muallifi
+            Kategoriya nomi
           </label>
           <input
-            id="name"
+            id="category"
             name="name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Abdulla qodiriy"
+            placeholder="Masalan: Badiiy adabiyot"
             className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none dark:bg-gray-700 dark:text-white"
           />
         </div>
         <div className="md:col-span-2">
           <button
             type="submit"
+            disabled={loading}
             className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition"
           >
-            Saqlash
+            {loading ? "Qo'shilmoqda..." : "Qo'shish"}
           </button>
         </div>
       </form>
-
       <div className="mt-20">
-        <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">
+        <h2 className="text-2xl font-medium mb-6 text-gray-800 dark:text-white">
           {groups.length === 0
-            ? "Kitob mualliflari yo'q!"
-            : "Barcha kitob mualliflari"}
+            ? "Kategoriyalar yo'q!"
+            : "Barcha Kategoriyalar"}
         </h2>
         {loading ? (
           <p className="text-gray-700 dark:text-gray-300">Yuklanmoqda...</p>
@@ -156,9 +239,9 @@ const Auther = () => {
               {groups.map((group) => (
                 <div
                   key={group.id}
-                  className="w-full flex max-sm:flex-col gap-3 items-center max-sm:items-start justify-between rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6"
+                  className="w-full flex flex-col gap-5 items-start justify-between rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6"
                 >
-                  <h2 className="text-xl font-semibold text-gray-700 dark:text-white">{group.name}</h2>
+                  <h2 className="text-xl text-gray-700 dark:text-white line-clamp-1">{group.name}</h2>
                   <div className="flex items-center space-x-2">
                     <button
                       className="text-sm text-blue-500 hover:text-blue-600 bg-blue-200 dark:bg-blue-500 dark:hover:bg-blue-600 dark:text-gray-300 px-3 py-1 rounded-md transition-all duration-300"
@@ -181,7 +264,7 @@ const Auther = () => {
       </div>
       {/* UPDATE MODAL */}
       <Modal
-        title="Muallifni Tahrirlash"
+        title="Kategoriyani Tahrirlash"
         open={isUpdateModalVisible}
         onOk={handleUpdateOk}
         onCancel={handleUpdateCancel}
@@ -191,12 +274,12 @@ const Auther = () => {
         <Input
           value={editedTitle}
           onChange={(e) => setEditedTitle(e.target.value)}
-          placeholder="Yangi Muallif nomi"
+          placeholder="Yangi Kategoriya nomi"
         />
       </Modal>
       {/* DELETE MODAL */}
       <Modal
-        title="Muallifni o‘chirish"
+        title="Kategoriyani o‘chirish"
         open={isDeleteModalVisible}
         onOk={handleDeleteOk}
         onCancel={handleDeleteCancel}
@@ -204,11 +287,11 @@ const Auther = () => {
         cancelText="Yo‘q"
       >
         <p>
-          {selectedGroup ? `"${selectedGroup.name}" muallifini o‘chirmoqchimisiz?` : ""}
+          {selectedGroup ? `"${selectedGroup.name}"Kategoriyani o‘chirmoqchimisiz?` : ""}
         </p>
       </Modal>
     </div>
   );
 };
 
-export default Auther;
+export default Category;

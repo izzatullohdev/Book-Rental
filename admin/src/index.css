@@ -1,7 +1,6 @@
+@import "tailwindcss";
 @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap")
 layer(base);
-
-@import "tailwindcss";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -753,7 +752,7 @@ span.flatpickr-weekday,
   box-shadow: 0px 1px 3px 0px rgba(16, 24, 40, 0.1),
     0px 1px 2px 0px rgba(16, 24, 40, 0.06);
   opacity: 0.8;
-  cursor: grabbing; /* Changes the cursor to indicate dragging */
+  cursor: grabbing;
 }
 
 .custom-calendar .fc-h-event {
@@ -761,6 +760,12 @@ span.flatpickr-weekday,
   border: none;
   color: black;
 }
+
+.custom-modal .ant-modal-content {
+  background-color: #1d2939;
+  color: white;
+}
+
 .fc.fc-media-screen {
   @apply min-h-screen;
 }
@@ -775,4 +780,16 @@ span.flatpickr-weekday,
 
 .simplebar-scrollbar.simplebar-visible:before {
   @apply opacity-100;
+}
+
+@layer utilities {
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
 }

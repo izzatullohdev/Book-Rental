@@ -7,19 +7,22 @@ interface FacultyType {
   name: string;
 }
 
-interface KafedraType {
+interface PermissionType {
   id: string;
-  name: string;
+  group_id: string;
+  permission_id: string;
+  permissionInfo: {
+    id: string;
+    code_name: string;
+  }
 }
 
-const Direction = () => {
+const Kafedra = () => {
   const [name, setName] = useState<string>("");
   const [faculties, setFaculties] = useState<FacultyType[]>([]);
+  const [userGroup, setUserGroup] = useState<PermissionType[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-
-  const [kafedras, setKafedras] = useState<KafedraType[]>([]);
-  const [selectedKafedraId, setSelectedKafedraId] = useState<string | null>(null);
 
   const [selectedFaculty, setSelectedFaculty] = useState<FacultyType | null>(null);
   const [editedTitle, setEditedTitle] = useState<string>("");
@@ -27,84 +30,120 @@ const Direction = () => {
   const [isUpdateModalVisible, setIsUpdateModalVisible] = useState<boolean>(false);
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState<boolean>(false);
 
+  const fetchPermission = async () => {
+    const token = localStorage.getItem("token"); 
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_API}/api/group-permissions`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      });
+      setUserGroup(response.data.data);
+    } catch (err) {
+      console.error("Muallifni olishda xatolik:", err);
+      setError("Muallifni olishda xatolik yuz berdi.");
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchPermission();
+  },[])
+
   const fetchFaculties = async () => {
-    setLoading(true);
     setError(null);
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API}/api/yonalish`);
+      const token = localStorage.getItem("token");
+
+      const isRolesStr = localStorage.getItem("isRoles");
+      const isRoles = isRolesStr ? JSON.parse(isRolesStr) : [];
+      const matchedGroups = userGroup.filter(item => isRoles.includes(item.group_id));
+      const permissionIds = matchedGroups?.map((item)=> item.permissionInfo.code_name);
+      
+      const response = await axios.get(`${import.meta.env.VITE_API}/api/kafedra`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "X-permission": permissionIds[0]
+        }
+      });
       setFaculties(response.data.data);
     } catch (err) {
-      console.error("Yo'nalishlarni olishda xatolik:", err);
-      setError("Yo'nalishlarni olishda xatolik yuz berdi.");
+      console.error("Kafedralarni olishda xatolik:", err);
+      setError("Kafedralarni olishda xatolik yuz berdi.");
     } finally {
       setLoading(false);
     }
   };
 
-  const fetchKafedras = async () => {
-    try {
-      const response = await axios.get(`${import.meta.env.VITE_API}/api/kafedra`);
-      setKafedras(response.data.data);
-    } catch (err) {
-      console.error("Kafedralarni olishda xatolik:", err);
-      antdMessage.error("Kafedralarni olishda xatolik yuz berdi.");
-    }
-  };
-
   useEffect(() => {
-    fetchFaculties();
-    fetchKafedras();
-  }, []);
+    if (userGroup.length > 0) {
+      fetchFaculties();
+    }
+  }, [userGroup]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    if (!selectedKafedraId) {
-      antdMessage.warning("Iltimos, kafedrani tanlang!");
+    if (!name.trim()) {
+      antdMessage.warning("Muallif kiritish shart!");
       return;
     }
-
-    if (!name.trim() || !selectedKafedraId) {
-      antdMessage.warning("Iltimos, yo'nalish nomini va kafedrani to‘liq to‘ldiring!");
-      return;
-    }
-
     try {
+      const token = localStorage.getItem("token");
+
+      const isRolesStr = localStorage.getItem("isRoles");
+      const isRoles = isRolesStr ? JSON.parse(isRolesStr) : [];
+      const matchedGroups = userGroup.filter(item => isRoles.includes(item.group_id));
+      const permissionIds = matchedGroups?.map((item)=> item.permissionInfo.code_name);
+
       await axios.post(
-        `${import.meta.env.VITE_API}/api/yonalish`,
-        { 
-          name: name,
-          kafedra_id: Number(selectedKafedraId),
+        `${import.meta.env.VITE_API}/api/kafedra`,
+        { name: name },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "X-permission": permissionIds[0]
+          }
         }
       );
-      antdMessage.success("Yo'nalish muvaffaqiyatli qo‘shildi!");
+      antdMessage.success("Kafedra muvaffaqiyatli qo‘shildi!");
       setName("");
-      setSelectedKafedraId(null);
       fetchFaculties();
     } catch (error) {
       console.error("Xatolik yuz berdi:", error);
-      antdMessage.error("Yo'nalish qo‘shilmadi.");
+      antdMessage.error("Xatolik! Kafedra qo‘shilmadi.");
     }
   };
 
-  // UPDATE modalni ko'rsatish
+  // UPDATE
   const showUpdateModal = (faculty: FacultyType) => {
     setSelectedFaculty(faculty);
     setEditedTitle(faculty.name);
     setIsUpdateModalVisible(true);
   };
 
-  // UPDATE saqlash
   const handleUpdateOk = async () => {
     try {
+      const token = localStorage.getItem("token");
+
+      const isRolesStr = localStorage.getItem("isRoles");
+      const isRoles = isRolesStr ? JSON.parse(isRolesStr) : [];
+      const matchedGroups = userGroup.filter(item => isRoles.includes(item.group_id));
+      const permissionIds = matchedGroups?.map((item)=> item.permissionInfo.code_name);
+
       await axios.put(
-        `${import.meta.env.VITE_API}/api/yonalish/${selectedFaculty?.id}`,
-        { name: editedTitle }
+        `${import.meta.env.VITE_API}/api/kafedra/${selectedFaculty?.id}`,
+        { name: editedTitle },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "X-permission": permissionIds[0]
+          }
+        }
       );
       setIsUpdateModalVisible(false);
       setSelectedFaculty(null);
       fetchFaculties();
-      antdMessage.success("Yo'nalish muvaffaqiyatli yangilandi!");
+      antdMessage.success("Kafedra muvaffaqiyatli yangilandi!");
     } catch (error) {
       console.error("Yangilashda xatolik:", error);
       antdMessage.error("Yangilash bajarilmadi!");
@@ -116,21 +155,34 @@ const Direction = () => {
     setSelectedFaculty(null);
   };
 
-  // DELETE modalni ko'rsatish
+  // DELETE
   const showDeleteModal = (faculty: FacultyType) => {
     setSelectedFaculty(faculty);
     setIsDeleteModalVisible(true);
   };
 
-  // DELETE tasdiqlash
   const handleDeleteOk = async () => {
     try {
+      const token = localStorage.getItem("token");
+
+      const isRolesStr = localStorage.getItem("isRoles");
+      const isRoles = isRolesStr ? JSON.parse(isRolesStr) : [];
+      const matchedGroups = userGroup.filter(item => isRoles.includes(item.group_id));
+      const permissionIds = matchedGroups?.map((item)=> item.permissionInfo.code_name);
+
       await axios.delete(
-        `${import.meta.env.VITE_API}/api/yonalish/${selectedFaculty?.id}`);
+        `${import.meta.env.VITE_API}/api/kafedra/${selectedFaculty?.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "X-permission": permissionIds[0]
+          }
+        }
+      );
       setIsDeleteModalVisible(false);
       setSelectedFaculty(null);
       fetchFaculties();
-      antdMessage.success("Yo'nalish o‘chirildi!");
+      antdMessage.success("Kafedra o‘chirildi!");
     } catch (error) {
       console.error("O'chirishda xatolik:", error);
       antdMessage.error("O‘chirishda xatolik yuz berdi.");
@@ -144,53 +196,34 @@ const Direction = () => {
 
   return (
     <div className="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">Yo'nalish Qo‘shish</h2>
+      <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">Kafedra Qo‘shish</h2>
       <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-6">
         <div className="w-full md:col-span-2">
-          <label htmlFor="name" className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Yo'nalish nomi
+          <label htmlFor="kafedra" className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Kafedra nomi
           </label>
           <input
-            id="name"
+            id="kafedra"
             name="name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Marketing"
+            placeholder="Masalan: Iqtisodiyot"
             className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none dark:bg-gray-700 dark:text-white"
           />
-        </div>
-        <div className="w-full md:col-span-2">
-          <label htmlFor="kafedra" className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Kafedrani tanlang!
-          </label>
-          <select
-            id="kafedra"
-            value={selectedKafedraId || ""}
-            onChange={(e) => setSelectedKafedraId(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none dark:bg-gray-700 dark:text-white"
-          >
-            <option value="" disabled>
-              Kafedrani tanlang
-            </option>
-            {kafedras.map((kafedra) => (
-              <option key={kafedra.id} value={kafedra.id}>
-                {kafedra.name}
-              </option>
-            ))}
-          </select>
         </div>
         <div className="md:col-span-2">
           <button
             type="submit"
+            disabled={loading}
             className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition"
           >
-            Saqlash
+            {loading ? "Qo'shilmoqda..." : "Qo'shish"}
           </button>
         </div>
       </form>
       <div className="mt-20">
-        <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">
-          {faculties.length === 0 ? "Yo'nalishlar mavjud emas" : "Barcha yo'nalishlar"}
+        <h2 className="text-2xl font-medium mb-6 text-gray-800 dark:text-white">
+          {faculties.length === 0 ? "Kafedralar mavjud emas" : "Barcha Kafedralar"}
         </h2>
         {loading ? (
           <p className="text-gray-700 dark:text-gray-300">Yuklanmoqda...</p>
@@ -201,9 +234,9 @@ const Direction = () => {
             {faculties.map((faculty) => (
               <div
                 key={faculty.id}
-                className="w-full flex max-sm:flex-col gap-3 items-center max-sm:items-start justify-between rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6"
+                className="w-full flex flex-col gap-5 items-start justify-between rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6"
               >
-                <h2 className="text-xl font-semibold text-gray-700 dark:text-white">{faculty.name}</h2>
+                <h2 className="text-xl text-gray-700 dark:text-white line-clamp-1">{faculty.name}</h2>
                 <div className="flex items-center space-x-2">
                   <button
                     className="text-sm text-blue-500 hover:text-blue-600 bg-blue-200 dark:bg-blue-500 dark:hover:bg-blue-600 dark:text-gray-300 px-3 py-1 rounded-md transition-all duration-300"
@@ -225,7 +258,7 @@ const Direction = () => {
       </div>
       {/* UPDATE MODAL */}
       <Modal
-        title="Yo'nalishni Tahrirlash"
+        title="Kafedrani Tahrirlash"
         open={isUpdateModalVisible}
         onOk={handleUpdateOk}
         onCancel={handleUpdateCancel}
@@ -235,12 +268,12 @@ const Direction = () => {
         <Input
           value={editedTitle}
           onChange={(e) => setEditedTitle(e.target.value)}
-          placeholder="Yangi yo'nalish nomi"
+          placeholder="Yangi kafedra nomi"
         />
       </Modal>
       {/* DELETE MODAL */}
       <Modal
-        title="yo'nalishni o‘chirish"
+        title="Kafedrani o‘chirish"
         open={isDeleteModalVisible}
         onOk={handleDeleteOk}
         onCancel={handleDeleteCancel}
@@ -248,11 +281,11 @@ const Direction = () => {
         cancelText="Yo‘q"
       >
         <p>
-          {selectedFaculty ? `"${selectedFaculty.name}" Yo'nalishni o‘chirmoqchimisiz?` : ""}
+          {selectedFaculty ? `"${selectedFaculty.name}" Kafedrani o‘chirmoqchimisiz?` : ""}
         </p>
       </Modal>
     </div>
   );
 };
 
-export default Direction;
+export default Kafedra;
