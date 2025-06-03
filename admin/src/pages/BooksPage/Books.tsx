@@ -1,81 +1,87 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
+"use client"
+
+import axios from "axios"
+import { useEffect, useState } from "react"
 
 interface BookType {
-  id: string;
-  name: string;
-  year: number;
-  page: number;
-  book_code: string;
+  id: string
+  name: string
+  year: number
+  page: number
+  book_code: string
 }
 
 interface PermissionType {
-  id: string;
-  group_id: string;
-  permission_id: string;
+  id: string
+  group_id: string
+  permission_id: string
   permissionInfo: {
-    id: string;
-    code_name: string;
+    id: string
+    code_name: string
   }
 }
 
 const Books = () => {
-  const [data, setData] = useState<BookType[]>([]);
-  const [searchTerm, setSearchTerm] = useState<string>("");
-  const [userGroup, setUserGroup] = useState<PermissionType[]>([]);
+  const [data, setData] = useState<BookType[]>([])
+  const [searchTerm, setSearchTerm] = useState<string>("")
+  const [userGroup, setUserGroup] = useState<PermissionType[]>([])
+  const [loading, setLoading] = useState<boolean>(false)
 
   const fetchPermission = async () => {
-    const token = localStorage.getItem("token"); 
+    const token = localStorage.getItem("token")
+    setLoading(true)
     try {
       const response = await axios.get(`${import.meta.env.VITE_API}/api/group-permissions`, {
         headers: {
           Authorization: `Bearer ${token}`,
-        }
-      });
-      setUserGroup(response.data.data);
+        },
+      })
+      setUserGroup(response.data.data)
     } catch (err) {
-      console.error("Muallifni olishda xatolik:", err);
+      console.error("Muallifni olishda xatolik:", err)
+    } finally {
+      setLoading(false)
     }
-  };
+  }
   useEffect(() => {
-    fetchPermission();
-  },[])
+    fetchPermission()
+  }, [])
 
   const fetchData = async () => {
+    setLoading(true)
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("token")
 
-      const isRolesStr = localStorage.getItem("isRoles");
-      const isRoles = isRolesStr ? JSON.parse(isRolesStr) : [];
-      const matchedGroups = userGroup.filter(item => isRoles.includes(item.group_id));
-      const permissionIds = matchedGroups?.map((item)=> item.permissionInfo.code_name);
+      const isRolesStr = localStorage.getItem("isRoles")
+      const isRoles = isRolesStr ? JSON.parse(isRolesStr) : []
+      const matchedGroups = userGroup.filter((item) => isRoles.includes(item.group_id))
+      const permissionIds = matchedGroups?.map((item) => item.permissionInfo.code_name)
 
-      const response = await axios.get<{ data: BookType[] }>(
-        `${import.meta.env.VITE_API}/api/books`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "X-permission": permissionIds[0]
-          }
-        }
-      );
-      setData(response.data.data);
+      const response = await axios.get<{ data: BookType[] }>(`${import.meta.env.VITE_API}/api/books`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "X-permission": permissionIds[0],
+        },
+      })
+      setData(response.data.data)
     } catch (error) {
-      console.error("Foydalanuvchilarni olishda xatolik:", error);
+      console.error("Foydalanuvchilarni olishda xatolik:", error)
+    } finally {
+      setLoading(false)
     }
-  };
-  ;
+  }
+
   useEffect(() => {
     if (userGroup.length > 0) {
-      fetchData();
+      fetchData()
     }
-  }, [userGroup]);
+  }, [userGroup])
 
   const filteredBooks = data.filter(
     (item) =>
       item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.book_code.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+      item.book_code.toLowerCase().includes(searchTerm.toLowerCase()),
+  )
 
   return (
     <div className="min-h-[80%] p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-auto">
@@ -94,17 +100,29 @@ const Books = () => {
       </div>
 
       <div className="mt-10">
-        {filteredBooks.length === 0 ? (
+        {loading ? (
+          <p className="text-center text-gray-700 dark:text-gray-300 py-4">Ma'lumotlar yuklanmoqda...</p>
+        ) : filteredBooks.length === 0 ? (
           <p className="text-center text-gray-500 dark:text-gray-400 py-4">Hech qanday kitob topilmadi</p>
         ) : (
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-800">
             <thead className="bg-gray-100 dark:bg-gray-700">
               <tr>
-                <th className="text-center px-6 py-3 text-sm font-medium text-gray-700 dark:text-white tracking-wider">#</th>
-                <th className="w-1/4 text-center px-6 py-3 text-sm font-medium text-gray-700 dark:text-white tracking-wider">Kitob nomi</th>
-                <th className="w-1/4 text-center px-6 py-3 text-sm font-medium text-gray-700 dark:text-white tracking-wider">Kitob chiqarilgan yil</th>
-                <th className="w-1/4 text-center px-6 py-3 text-sm font-medium text-gray-700 dark:text-white tracking-wider">Kitob varaqasi</th>
-                <th className="w-1/4 text-center px-6 py-3 text-sm font-medium text-gray-700 dark:text-white tracking-wider">Kitob kodi</th>
+                <th className="text-center px-6 py-3 text-sm font-medium text-gray-700 dark:text-white tracking-wider">
+                  #
+                </th>
+                <th className="w-1/4 text-center px-6 py-3 text-sm font-medium text-gray-700 dark:text-white tracking-wider">
+                  Kitob nomi
+                </th>
+                <th className="w-1/4 text-center px-6 py-3 text-sm font-medium text-gray-700 dark:text-white tracking-wider">
+                  Kitob chiqarilgan yil
+                </th>
+                <th className="w-1/4 text-center px-6 py-3 text-sm font-medium text-gray-700 dark:text-white tracking-wider">
+                  Kitob varaqasi
+                </th>
+                <th className="w-1/4 text-center px-6 py-3 text-sm font-medium text-gray-700 dark:text-white tracking-wider">
+                  Kitob kodi
+                </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
@@ -132,7 +150,7 @@ const Books = () => {
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
 export default Books;

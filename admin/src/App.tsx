@@ -20,6 +20,9 @@ import Status from "./pages/BooksPage/Status";
 import CreateBooks from "./pages/BooksPage/CreateBooks";
 import Roles from "./pages/Admins/Roles";
 import ProtectedRoute from "./components/common/ProtectedRoute";
+import Order from "./pages/OrderDetails/Order";
+import PermissionGroup from "./pages/Admins/PermissionGroup";
+import Permission from "./pages/Admins/Permission";
 
 export default function App() {
   return (
@@ -45,6 +48,9 @@ export default function App() {
             <Route path="/bar-chart" element={<ProtectedRoute><BarChart /></ProtectedRoute>} />
             <Route path="/users-all" element={<ProtectedRoute><UsersAll /></ProtectedRoute>} />
             <Route path="/roles" element={<ProtectedRoute><Roles /></ProtectedRoute>} />
+            <Route path="/roles/:id" element={<ProtectedRoute><PermissionGroup /></ProtectedRoute>} />
+            <Route path="/order" element={<ProtectedRoute><Order /></ProtectedRoute>}/>
+            <Route path="/permission-create" element={<ProtectedRoute><Permission /></ProtectedRoute>}/>
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

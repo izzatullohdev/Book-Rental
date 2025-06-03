@@ -17,6 +17,7 @@ interface LoginResponse {
   message: string;
   data: {
     token: string;
+    full_name: string;
     userGroups?: {
       group_id: string;
     }[];
@@ -36,8 +37,18 @@ export default function SignInForm() {
 
   const navigate = useNavigate();
 
+  const validatePassportId = (id: string) => {
+    const passportRegex = /^[A-Z]{2}\d{7}$/;
+    return passportRegex.test(id);
+  };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!validatePassportId(passport_id)) {
+      antdMessage.warning("Passport ID faqat shu formatni qabul qiladi: AD1234567");
+      return;
+    }
 
     const payload: FormData = {
       passport_id,
@@ -52,28 +63,28 @@ export default function SignInForm() {
         payload,
         {
           headers: {
-            "Content-Type": "application/json"
-          }
+            "Content-Type": "application/json",
+          },
         }
       );
 
       if (response.data.success) {
         const token = response.data.data.token;
+        const full_name = response.data.data.full_name;
         const roles = response.data.data.userGroups?.map((item) => item.group_id);
         const expiry = new Date().getTime() + 24 * 60 * 60 * 1000;
 
         localStorage.setItem("token", token);
+        localStorage.setItem("name", full_name);
         localStorage.setItem("isRoles", JSON.stringify(roles));
         localStorage.setItem("token_expiry", expiry.toString());
 
         antdMessage.success("Kirish muvaffaqiyatli");
-
         navigate("/");
 
         setTimeout(() => {
           window.location.reload();
         }, 100);
-
       } else {
         antdMessage.error("Kirishda xatolik yuz berdi");
       }
@@ -109,7 +120,7 @@ export default function SignInForm() {
                     placeholder="AD2072541"
                     value={passport_id}
                     onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                      setPassportId(e.target.value)
+                      setPassportId(e.target.value.toUpperCase()) // katta harf majburlash
                     }
                   />
                 </div>

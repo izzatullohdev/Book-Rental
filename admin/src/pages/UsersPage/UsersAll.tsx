@@ -32,12 +32,12 @@ interface PermissionType {
 
 const UsersAll: React.FC = () => {
   const [data, setData] = useState<UsersType[]>([]);
-  const [filteredData, setFilteredData] = useState<UsersType[]>([]);
   const [selectedKafedra, setSelectedKafedra] = useState<string>("");
   const [selectedYonalish, setSelectedYonalish] = useState<string>("");
   const [selectedGuruh, setSelectedGuruh] = useState<string>("");
   const [searchValue, setSearchValue] = useState<string>("");
   const [userGroup, setUserGroup] = useState<PermissionType[]>([]);
+  const [finalFilteredData, setFinalFilteredData] = useState<UsersType[]>([]);
 
   const fetchPermission = async () => {
     const token = localStorage.getItem("token"); 
@@ -126,7 +126,6 @@ const UsersAll: React.FC = () => {
         }
       );
       setData(response.data.data);
-      setFilteredData(response.data.data);
     } catch (error) {
       console.error("Foydalanuvchilarni olishda xatolik:", error);
     }
@@ -170,7 +169,14 @@ const UsersAll: React.FC = () => {
       );
     }
 
-    setFilteredData(filtered);
+    // Final filtered data with validation check
+    const validFilteredData = filtered.filter(
+      u =>
+        u.StudentGroup &&
+        u.StudentGroup.Yonalish &&
+        u.StudentGroup.Yonalish.Kafedra
+    );
+    setFinalFilteredData(validFilteredData);
   }, [selectedKafedra, selectedYonalish, selectedGuruh, searchValue, data]);
 
   const handleKafedraChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -191,7 +197,7 @@ const UsersAll: React.FC = () => {
   return (
     <div className="min-h-[80%] p-6 bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-auto">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-800 dark:text-white/90 mb-4">
+        <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">
           Barcha foydalanuvchilar
         </h2>
         <div className="relative">
@@ -207,85 +213,77 @@ const UsersAll: React.FC = () => {
       </div>
 
       <div className="overflow-x-auto my-20">
-        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-800">
-          <thead className="bg-gray-100 dark:bg-gray-700">
-            <tr>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-white uppercase tracking-wider">
-                #
-              </th>
-              <th className="w-1/5 text-center px-6 py-3 text-sm font-medium text-gray-700 dark:text-white tracking-wider">
-                Ism familiya
-              </th>
-              <th className="w-1/5 text-center px-6 py-3 text-sm font-medium text-gray-700 dark:text-white tracking-wider">
-                Passport
-              </th>
-              <th className="w-1/5 text-center px-6 py-3 text-sm font-medium text-gray-700 dark:text-white uppercase tracking-wider">
-                <select
-                  className="mt-1 w-full border border-gray-300 dark:border-gray-500 outline-none rounded px-2 py-1 dark:bg-gray-700 dark:text-white"
-                  value={selectedKafedra}
-                  onChange={handleKafedraChange}
-                >
-                  <option value="">
-                    Kafedra
-                  </option>
-                  {getUniqueKafedralar().map(k => (
-                    <option key={k.id} value={k.id}>
-                      {k.name}
-                    </option>
-                  ))}
-                </select>
-              </th>
-              <th className="w-1/5 text-center px-6 py-3 text-sm font-medium text-gray-700 dark:text-white uppercase tracking-wider">
-                <select
-                  className="mt-1 w-full border border-gray-300 dark:border-gray-500 outline-none rounded px-2 py-1 dark:bg-gray-700 dark:text-white"
-                  value={selectedYonalish}
-                  onChange={handleYonalishChange}
-                >
-                  <option value="">
-                    Yo'nalish
-                  </option>
-                  {getUniqueYonalishlar().map(y => (
-                    <option key={y.id} value={y.id}>
-                      {y.name}
-                    </option>
-                  ))}
-                </select>
-              </th>
-              <th className="w-1/5 text-center px-6 py-3 text-sm font-medium text-gray-700 dark:text-white uppercase tracking-wider">
-                <select
-                  className="mt-1 w-full border border-gray-300 dark:border-gray-500 outline-none rounded px-2 py-1 dark:bg-gray-700 dark:text-white"
-                  value={selectedGuruh}
-                  onChange={handleGuruhChange}
-                >
-                  <option value="">
-                    Guruh
-                  </option>
-                  {getUniqueGuruhlar().map(g => (
-                    <option key={g.id} value={g.id}>
-                      {g.name}
-                    </option>
-                  ))}
-                </select>
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
-            {filteredData.length === 0 ? (
+        {finalFilteredData.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-lg text-gray-500 dark:text-gray-400">
+              Foydalanuvchilar mavjud emas!
+            </p>
+          </div>
+        ) : (
+          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-800">
+            <thead className="bg-gray-100 dark:bg-gray-700">
               <tr>
-                <td
-                  colSpan={6}
-                  className="text-center py-6 text-gray-500 dark:text-gray-400"
-                >
-                  Hech qanday foydalanuvchi topilmadi.
-                </td>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-white uppercase tracking-wider">
+                  #
+                </th>
+                <th className="w-1/5 text-center px-6 py-3 text-sm font-medium text-gray-700 dark:text-white tracking-wider">
+                  Ism familiya
+                </th>
+                <th className="w-1/5 text-center px-6 py-3 text-sm font-medium text-gray-700 dark:text-white tracking-wider">
+                  Passport
+                </th>
+                <th className="w-1/5 text-center px-6 py-3 text-sm font-medium text-gray-700 dark:text-white uppercase tracking-wider">
+                  <select
+                    className="mt-1 w-full border border-gray-300 dark:border-gray-500 outline-none rounded px-2 py-1 dark:bg-gray-700 dark:text-white"
+                    value={selectedKafedra}
+                    onChange={handleKafedraChange}
+                  >
+                    <option value="">
+                      Kafedra
+                    </option>
+                    {getUniqueKafedralar().map(k => (
+                      <option key={k.id} value={k.id}>
+                        {k.name}
+                      </option>
+                    ))}
+                  </select>
+                </th>
+                <th className="w-1/5 text-center px-6 py-3 text-sm font-medium text-gray-700 dark:text-white uppercase tracking-wider">
+                  <select
+                    className="mt-1 w-full border border-gray-300 dark:border-gray-500 outline-none rounded px-2 py-1 dark:bg-gray-700 dark:text-white"
+                    value={selectedYonalish}
+                    onChange={handleYonalishChange}
+                  >
+                    <option value="">
+                      Yo'nalish
+                    </option>
+                    {getUniqueYonalishlar().map(y => (
+                      <option key={y.id} value={y.id}>
+                        {y.name}
+                      </option>
+                    ))}
+                  </select>
+                </th>
+                <th className="w-1/5 text-center px-6 py-3 text-sm font-medium text-gray-700 dark:text-white uppercase tracking-wider">
+                  <select
+                    className="mt-1 w-full border border-gray-300 dark:border-gray-500 outline-none rounded px-2 py-1 dark:bg-gray-700 dark:text-white"
+                    value={selectedGuruh}
+                    onChange={handleGuruhChange}
+                  >
+                    <option value="">
+                      Guruh
+                    </option>
+                    {getUniqueGuruhlar().map(g => (
+                      <option key={g.id} value={g.id}>
+                        {g.name}
+                      </option>
+                    ))}
+                  </select>
+                </th>
               </tr>
-            ) : (
-              filteredData.filter(
-                  u =>
-                    u.StudentGroup &&
-                    u.StudentGroup.Yonalish &&
-                    u.StudentGroup.Yonalish.Kafedra
-                ).map((item, index) => (
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+              {finalFilteredData.map((item, index) => (
                 <tr
                   key={item.id}
                   className="hover:bg-gray-50 dark:hover:bg-white/[0.05] transition"
@@ -300,25 +298,19 @@ const UsersAll: React.FC = () => {
                     {item.passport_id}
                   </td>
                   <td className="w-1/5 text-center px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
-                    {item.StudentGroup && item.StudentGroup.Yonalish && item.StudentGroup.Yonalish.Kafedra 
-                      ? item.StudentGroup.Yonalish.Kafedra.name 
-                      : "Ma'lumot yo'q"}
+                    {item.StudentGroup.Yonalish.Kafedra.name}
                   </td>
                   <td className="w-1/5 text-center px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
-                    {item.StudentGroup && item.StudentGroup.Yonalish 
-                      ? item.StudentGroup.Yonalish.name 
-                      : "Ma'lumot yo'q"}
+                    {item.StudentGroup.Yonalish.name}
                   </td>
                   <td className="w-1/5 text-center px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
-                    {item.StudentGroup 
-                      ? item.StudentGroup.name 
-                      : "Ma'lumot yo'q"}
+                    {item.StudentGroup.name}
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );
